@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Şıpsevdi · tasarım yönü C</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body><!--tb--><style>#tb{position:fixed;top:0;left:0;right:0;height:46px;z-index:99999;display:flex;align-items:center;gap:6px;padding:0 14px;background:#111;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif}#tb a{color:#d8d8d8;text-decoration:none;padding:9px 14px;border-radius:8px;white-space:nowrap}#tb a:hover{background:#2a2a2a}#tb a.on{background:#fff;color:#111}#tb span{flex:1}#tb a.sw{border:1px solid #555}html{padding-top:46px}.phone{top:62px!important}@media(max-width:900px){#tb{display:none}html{padding-top:0}}</style><div id="tb"><a href="../">Rastla</a><a class="on" href="../c/">Şıpsevdi</a><a href="../d/">Yakın</a><a href="../e/">Önce plan</a><span></span><a class="sw" href="panel.html">Yönetim paneli</a></div><!--/tb-->
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+body{margin:0;background:#EFE5D3}
+a{color:#6A2BFF}a:hover{color:#14123B}
+button{font-family:inherit}
+*::-webkit-scrollbar{display:none}
+@keyframes popA{0%{scale:1}40%{scale:1.24}70%{scale:.93}100%{scale:1}}
+@keyframes popB{0%{scale:1}40%{scale:1.24}70%{scale:.93}100%{scale:1}}
+@keyframes countA{0%{scale:1}45%{scale:1.22}100%{scale:1}}
+@keyframes countB{0%{scale:1}45%{scale:1.22}100%{scale:1}}
+@keyframes collideL{0%{transform:translateX(-280px) rotate(-38deg)}60%{transform:translateX(30px) rotate(-3deg)}80%{transform:translateX(10px) rotate(-10deg)}100%{transform:translateX(16px) rotate(-8deg)}}
+@keyframes collideR{0%{transform:translateX(280px) rotate(38deg)}60%{transform:translateX(-30px) rotate(3deg)}80%{transform:translateX(-10px) rotate(10deg)}100%{transform:translateX(-16px) rotate(8deg)}}
+@keyframes impact{0%,50%{transform:scale(0) rotate(-30deg)}72%{transform:scale(1.35) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes titleIn{0%{transform:scale(2.3) rotate(-14deg);opacity:0}60%{transform:scale(.94) rotate(-3deg);opacity:1}100%{transform:scale(1) rotate(-4deg);opacity:1}}
+@keyframes burstSpin{0%{transform:scale(.2) rotate(0);opacity:0}40%{opacity:1}100%{transform:scale(1) rotate(30deg);opacity:1}}
+@keyframes ring{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}100%{transform:translate(-50%,-50%) scale(2.8);opacity:0}}
+@keyframes confetti{0%{transform:translate(-50%,-50%) scale(.3) rotate(0);opacity:1}75%{opacity:1}100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r));opacity:0}}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+@keyframes bubbleIn{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.04);opacity:1}100%{transform:scale(1)}}
+@keyframes sheetIn{0%{transform:translateY(100%)}100%{transform:none}}
+@keyframes toastIn{0%{transform:translateY(24px);opacity:0}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}}
+@media (max-width:760px){
+  [data-notes]{display:none!important}
+  [data-stage]{padding:0!important;gap:0!important;min-height:100dvh!important;background:#0E0D24!important;align-items:flex-start!important}
+  [data-shell]{padding:0!important;border-radius:0!important;box-shadow:none!important}
+  [data-shell]>[data-rm]{border-radius:0!important}
+  [data-chrome]{display:none!important}
+}
+[data-rm="1"] *{animation-duration:1ms!important;animation-delay:0ms!important;transition-duration:1ms!important}
+</style>
+</helmet>
+<div lang="tr" data-stage="1" style="min-height:100vh;background:#EFE5D3;color:#14123B;font-family:'Bricolage Grotesque',system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:56px;justify-content:center;align-items:flex-start;padding:48px 28px 80px;box-sizing:border-box;">
+
+<sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+<aside data-notes="1" style="flex:1 1 340px;max-width:480px;display:flex;flex-direction:column;gap:26px;">
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <span style="align-self:flex-start;background:#14123B;color:#CCFF2E;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:8px;transform:rotate(-2deg);">Tasarım yönü C · cesur alternatif</span>
+    <h1 style="margin:10px 0 30px -4px;font-family:Anton,sans-serif;font-weight:400;font-size:112px;line-height:.9;color:#6A2BFF;letter-spacing:-.5px;">ŞIPSEVDİ</h1>
+    <p style="margin:6px 0 0;font-size:17px;line-height:1.5;text-wrap:pretty;">Flörtü bir fanzin kolajı gibi ele alıyoruz: her profil bir poster sayfası, her eşleşme bir konfeti patlaması. Gürültü dekorda, netlik içerikte: metin daima düz renk zemin üstünde, ana aksiyonlar daima aynı yerde.</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <h2 style="margin:0;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;">Ekranlar</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <sc-for list="{{ switcher }}" as="s" hint-placeholder-count="5">
+        <button onClick="{{ s.go }}" style="min-height:44px;padding:0 14px;border-radius:12px;border:3px solid #14123B;background:{{ s.bg }};color:{{ s.fg }};font-size:14px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 #14123B;" style-active="transform:translate(2px,2px);box-shadow:1px 1px 0 #14123B;">{{ s.label }}</button>
+      </sc-for>
+    </div>
+    <p style="margin:0;font-size:13px;line-height:1.5;color:#3A365F;">Kartı sürükle (sağ: beğen, sol: geç, yukarı: favori) ya da butonları kullan. Fotoğrafın sağına/soluna dokun: galeri. Elif ve Zeynep seni beğenmiş, eşleşme onlarda tetiklenir.</p>
+    <p style="margin:4px 0 0;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:14px;font-weight:700;"><a href="panel.html" style="display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:12px;border:3px solid #14123B;background:#6A2BFF;color:#FFFFFF;text-decoration:none;font-weight:800;box-shadow:3px 3px 0 #14123B;">Yönetim paneline geç</a><span>Diğer yönler: <a href="../">Rastla</a><a href="../d/">Yakın</a>, <a href="../e/">Önce plan</a></span></p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <h2 style="margin:0;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;">Tasarım notu · Palet</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;">
+      <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;border:3px solid #14123B;background:#6A2BFF;"></div><span style="font-size:12px;font-weight:700;line-height:1.25;">Elektrik mor<br>#6A2BFF</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;border:3px solid #14123B;background:#FF5C47;"></div><span style="font-size:12px;font-weight:700;line-height:1.25;">Mercan<br>#FF5C47</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;border:3px solid #14123B;background:#CCFF2E;"></div><span style="font-size:12px;font-weight:700;line-height:1.25;">Asit lime<br>#CCFF2E</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;border:3px solid #14123B;background:#14123B;"></div><span style="font-size:12px;font-weight:700;line-height:1.25;">Derin lacivert<br>#14123B</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;border:3px solid #14123B;background:#FFF3E0;"></div><span style="font-size:12px;font-weight:700;line-height:1.25;">Krem zemin<br>#FFF3E0</span></div>
+    </div>
+    <p style="margin:0;font-size:14px;line-height:1.5;color:#3A365F;">Kontrast kuralı: mor üstüne beyaz/lime (6.2 / 5.3:1), mercan ve lime üstüne lacivert (5.9 / 14:1). Mercan üstüne beyaz metin yok.</p>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <h2 style="margin:0;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;">Fontlar</h2>
+    <div style="background:#FFF3E0;border:3px solid #14123B;border-radius:18px;padding:16px 18px;box-shadow:6px 6px 0 #14123B;display:flex;flex-direction:column;gap:8px;">
+      <span style="font-family:Anton,sans-serif;font-size:44px;line-height:1;">ĞÜŞİÖÇ ışık İzmir</span>
+      <span style="font-size:14px;font-weight:700;">Anton: display, sıkıştırılmış. Latin Extended: ğ ş ı İ tam destek.</span>
+      <span style="font-size:15px;line-height:1.45;">Bricolage Grotesque: gövde metni. Değişken genişlik/ağırlık, Türkçe karakterlerde okunaklı. Işığı söndürmeden önce çay demlenir.</span>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <h2 style="margin:0;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;">React Native'de en zor 3 öğe</h2>
+    <ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;">
+      <li style="display:grid;grid-template-columns:36px 1fr;gap:12px;"><span style="font-family:Anton,sans-serif;font-size:32px;line-height:1;color:#6A2BFF;">01</span><span style="font-size:14px;line-height:1.5;"><b>Kart yığını + eğilme + renk/damga geçişi.</b> Gesture Handler <code>Gesture.Pan()</code> → Reanimated <code>useSharedValue</code>; rotasyon, tint opaklığı, damgalar ve arka kartların pozu aynı <code>translateX</code>'ten <code>interpolate</code>. Geri dönüş <code>withSpring</code>, fırlatma <code>withTiming</code> + <code>runOnJS(next)</code>.</span></li>
+      <li style="display:grid;grid-template-columns:36px 1fr;gap:12px;"><span style="font-family:Anton,sans-serif;font-size:32px;line-height:1;color:#6A2BFF;">02</span><span style="font-size:14px;line-height:1.5;"><b>Eşleşme çarpışması + konfeti.</b> Fotoğraflar <code>withSequence(withSpring…)</code>; 40 parça konfeti için <code>@shopify/react-native-skia</code> Canvas (tek draw pass, 60fps). <code>useReducedMotion()</code> açıksa yalnızca opaklık geçişi.</span></li>
+      <li style="display:grid;grid-template-columns:36px 1fr;gap:12px;"><span style="font-family:Anton,sans-serif;font-size:32px;line-height:1;color:#6A2BFF;">03</span><span style="font-size:14px;line-height:1.5;"><b>Sert gölge, grain ve taşan tipografi.</b> Android <code>elevation</code> ofsetli gölge çizmez → gölgeyi ofsetli ikinci <code>View</code> ile kur. Grain: döşenebilir PNG + <code>ImageBackground resizeMode="repeat"</code> (ya da Skia <code>Turbulence</code>). Taşan başlık: <code>overflow:'hidden'</code> kap + <code>maxFontSizeMultiplier</code>.</span></li>
+    </ol>
+  </div>
+
+</aside>
+</sc-if>
+
+<div data-shell="1" style="flex:none;padding:12px;background:#0E0D24;border-radius:62px;box-shadow:14px 14px 0 #6A2BFF;">
+<div data-rm="{{ rmAttr }}" style="position:relative;width:393px;height:852px;border-radius:50px;overflow:hidden;background:#FFF3E0;isolation:isolate;">
+
+<!-- 01 KEŞFET -->
+<sc-if value="{{ isDiscover }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="01 Keşfet" style="position:absolute;inset:0;background:#FFF3E0;overflow:hidden;">
+  <div aria-hidden="true" style="position:absolute;top:-70px;right:-130px;width:330px;height:300px;background:#FF5C47;border-radius:58% 42% 63% 37% / 45% 55% 45% 55%;transform:rotate(-12deg);"></div>
+  <div aria-hidden="true" style="position:absolute;bottom:60px;left:-120px;width:300px;height:280px;background:#CCFF2E;border-radius:42% 58% 37% 63% / 55% 45% 55% 45%;"></div>
+  <div aria-hidden="true" style="position:absolute;top:250px;right:-56px;width:110px;height:110px;border:14px solid #6A2BFF;border-radius:50%;"></div>
+  <sc-if value="{{ grain }}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.28;mix-blend-mode:multiply;"><filter id="grA"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#grA)"></rect></svg></sc-if>
+
+  <h1 style="position:absolute;top:76px;left:14px;margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:98px;line-height:.9;color:#14123B;transform:rotate(-3deg);transform-origin:left top;letter-spacing:-.5px;">KEŞFET</h1>
+  <button onClick="{{ goFilter }}" aria-label="Filtreleri aç" style="position:absolute;top:80px;right:18px;width:52px;height:52px;border-radius:16px;background:#CCFF2E;border:3px solid #14123B;box-shadow:4px 4px 0 #14123B;display:grid;place-items:center;color:#14123B;cursor:pointer;transform:rotate(4deg);" style-active="transform:translate(2px,2px) rotate(4deg);box-shadow:1px 1px 0 #14123B;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h9M18 7h2M4 17h3M12 17h8"></path><circle cx="15.5" cy="7" r="2.4"></circle><circle cx="9.5" cy="17" r="2.4"></circle></svg></button>
+  <div style="position:absolute;top:176px;left:22px;display:flex;align-items:center;gap:6px;background:#FFFFFF;border:2.5px solid #14123B;border-radius:999px;padding:5px 12px 5px 9px;font-size:13px;font-weight:700;transform:rotate(2deg);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14123B" stroke-width="2.6"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"></path><circle cx="12" cy="10" r="2.3"></circle></svg>Kadıköy · {{ distLabel }} çevren</div>
+
+  <div style="position:absolute;top:213px;left:28px;width:337px;height:420px;">
+    <sc-if value="{{ hasBack2 }}" hint-placeholder-val="{{ true }}">
+      <div aria-hidden="true" style="position:absolute;inset:0;transform:{{ back2T }};transition:{{ backTr }};">
+        <div style="position:absolute;inset:0;border:3px solid #14123B;border-radius:30px;background:{{ back2.photo }};box-shadow:8px 8px 0 #14123B;overflow:hidden;"><div style="position:absolute;left:0;right:0;bottom:0;height:112px;background:#FFF3E0;border-top:3px solid #14123B;"></div></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hasBack1 }}" hint-placeholder-val="{{ true }}">
+      <div aria-hidden="true" style="position:absolute;inset:0;transform:{{ back1T }};transition:{{ backTr }};">
+        <div style="position:absolute;inset:0;border:3px solid #14123B;border-radius:30px;background:{{ back1.photo }};box-shadow:8px 8px 0 #14123B;overflow:hidden;"><div style="position:absolute;left:0;right:0;bottom:0;height:112px;background:#FFF3E0;border-top:3px solid #14123B;"></div></div>
+        <div style="position:absolute;left:-14px;bottom:108px;background:#14123B;padding:8px 18px 4px 24px;transform:rotate(-4deg);border-radius:6px;display:flex;align-items:baseline;gap:10px;"><span style="font-family:Anton,sans-serif;font-size:76px;line-height:.9;color:#CCFF2E;">{{ back1.upper }}</span><span style="font-family:Anton,sans-serif;font-size:40px;line-height:.9;color:#FFF3E0;">{{ back1.age }}</span></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hasTop }}" hint-placeholder-val="{{ true }}">
+      <div role="group" aria-label="{{ top.aria }}" onPointerDown="{{ cardDown }}" onPointerMove="{{ cardMove }}" onPointerUp="{{ cardUp }}" onPointerCancel="{{ cardUp }}" style="position:absolute;inset:0;transform:{{ topT }};transition:{{ topTr }};touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;z-index:3;">
+        <div style="position:absolute;inset:0;border:3px solid #14123B;border-radius:30px;background:{{ top.photo }};box-shadow:8px 8px 0 #14123B;overflow:hidden;">
+          <div aria-hidden="true" style="position:absolute;inset:0;background:{{ tintBg }};opacity:{{ tintOp }};"></div>
+          <div style="position:absolute;top:14px;left:16px;right:16px;display:flex;gap:6px;">
+            <sc-for list="{{ top.bars }}" as="b" hint-placeholder-count="4"><div style="flex:1;height:6px;border-radius:4px;background:{{ b.bg }};border:1.5px solid #14123B;"></div></sc-for>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:112px;background:#FFF3E0;border-top:3px solid #14123B;padding:25px 16px 0;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;flex-wrap:nowrap;gap:7px;overflow:hidden;padding:2px;">
+              <sc-for list="{{ top.tags }}" as="t" hint-placeholder-count="4"><span style="flex:none;background:{{ t.bg }};color:{{ t.fg }};transform:{{ t.transform }};border:2.5px solid #14123B;border-radius:10px;padding:3px 10px;font-size:13px;font-weight:800;">{{ t.label }}</span></sc-for>
+            </div>
+            <p style="margin:0;font-size:14px;line-height:1.35;color:#14123B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ top.bio }}</p>
+          </div>
+        </div>
+        <div style="position:absolute;top:30px;right:-12px;display:flex;align-items:center;gap:5px;background:#FF5C47;color:#14123B;border:3px solid #14123B;border-radius:12px;padding:5px 12px 5px 9px;font-size:14px;font-weight:800;transform:rotate(6deg);box-shadow:3px 3px 0 #14123B;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14123B" stroke-width="2.8"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z"></path><circle cx="12" cy="10" r="2.3"></circle></svg>{{ top.km }}</div>
+        <div style="position:absolute;left:-14px;bottom:108px;background:#14123B;padding:8px 18px 4px 24px;transform:rotate(-4deg);border-radius:6px;box-shadow:5px 5px 0 #FF5C47;display:flex;align-items:baseline;gap:10px;">
+          <span style="font-family:Anton,sans-serif;font-size:76px;line-height:.9;color:#CCFF2E;">{{ top.upper }}</span><span style="font-family:Anton,sans-serif;font-size:40px;line-height:.9;color:#FFF3E0;">{{ top.age }}</span>
+          <sc-if value="{{ top.verified }}" hint-placeholder-val="{{ true }}"><svg aria-label="Doğrulanmış profil" role="img" width="26" height="26" viewBox="0 0 24 24" fill="#CCFF2E" stroke="#14123B" stroke-width="1.6" stroke-linejoin="round" style="align-self:center;"><path d="M12 2.8l2.4 1.8 3 .1.9 2.8 2.4 1.8-1 2.7 1 2.7-2.4 1.8-.9 2.8-3 .1L12 21.2l-2.4-1.8-3-.1-.9-2.8-2.4-1.8 1-2.7-1-2.7 2.4-1.8.9-2.8 3-.1z"></path><path d="M8.5 12l2.4 2.4 4.6-4.8" fill="none" stroke-width="2.4"></path></svg></sc-if>
+        </div>
+        <div aria-hidden="true" style="position:absolute;top:64px;left:18px;opacity:{{ likeOp }};transform:{{ likeT }};background:#CCFF2E;color:#14123B;border:4px solid #14123B;border-radius:12px;padding:2px 14px 0;font-family:Anton,sans-serif;font-size:58px;line-height:1;box-shadow:5px 5px 0 #14123B;pointer-events:none;">BEĞEN</div>
+        <div aria-hidden="true" style="position:absolute;top:64px;right:18px;opacity:{{ nopeOp }};transform:{{ nopeT }};background:#FF5C47;color:#14123B;border:4px solid #14123B;border-radius:12px;padding:2px 16px 0;font-family:Anton,sans-serif;font-size:58px;line-height:1;box-shadow:5px 5px 0 #14123B;pointer-events:none;">GEÇ</div>
+        <div aria-hidden="true" style="position:absolute;top:150px;left:50%;opacity:{{ favOp }};transform:translateX(-50%) rotate(-6deg);background:#6A2BFF;color:#CCFF2E;border:4px solid #14123B;border-radius:12px;padding:2px 16px 0;font-family:Anton,sans-serif;font-size:58px;line-height:1;box-shadow:5px 5px 0 #14123B;pointer-events:none;">FAVORİ</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;border:3px dashed #14123B;border-radius:30px;background:#FFF3E0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:14px;padding:28px;box-sizing:border-box;">
+        <span style="font-family:Anton,sans-serif;font-size:60px;line-height:1.04;color:#6A2BFF;transform:rotate(-3deg);">ŞİMDİLİK<br>BU KADAR</span>
+        <p style="margin:0;font-size:16px;line-height:1.45;">Yakınındaki herkesi gördün. Mesafeyi büyüt ya da baştan başla.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button onClick="{{ restart }}" style="min-height:48px;padding:0 18px;border-radius:14px;background:#CCFF2E;border:3px solid #14123B;box-shadow:4px 4px 0 #14123B;font-size:15px;font-weight:800;color:#14123B;cursor:pointer;">Baştan başla</button>
+          <button onClick="{{ goFilter }}" style="min-height:48px;padding:0 18px;border-radius:14px;background:#FFFFFF;border:3px solid #14123B;font-size:15px;font-weight:800;color:#14123B;cursor:pointer;">Filtreleri aç</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;top:652px;left:0;right:0;display:flex;justify-content:center;align-items:flex-end;gap:26px;opacity:{{ actOp }};pointer-events:{{ actPe }};transition:opacity .2s;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <button aria-label="Geç" onClick="{{ onNope }}" style="width:68px;height:68px;border-radius:22px;background:#FF5C47;border:3px solid #14123B;box-shadow:5px 5px 0 #14123B;display:grid;place-items:center;color:#14123B;cursor:pointer;transform:rotate(-4deg);animation:{{ nopeAnim }};" style-active="transform:translate(3px,3px) rotate(-4deg);box-shadow:2px 2px 0 #14123B;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+      <span style="font-size:12px;font-weight:800;">Geç</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <button aria-label="Favori" onClick="{{ onFav }}" style="width:56px;height:56px;border-radius:18px;background:#CCFF2E;border:3px solid #14123B;box-shadow:4px 4px 0 #14123B;display:grid;place-items:center;color:#14123B;cursor:pointer;transform:rotate(5deg);animation:{{ favAnim }};" style-active="transform:translate(3px,3px) rotate(5deg);box-shadow:1px 1px 0 #14123B;"><svg width="26" height="26" viewBox="0 0 24 24" fill="#FFF3E0" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8z"></path></svg></button>
+      <span style="font-size:12px;font-weight:800;">Favori</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <button aria-label="Beğen" onClick="{{ onLike }}" style="width:80px;height:80px;border-radius:26px;background:#6A2BFF;border:3px solid #14123B;box-shadow:6px 6px 0 #14123B;display:grid;place-items:center;color:#CCFF2E;cursor:pointer;transform:rotate(-3deg);animation:{{ likeAnim }};" style-active="transform:translate(4px,4px) rotate(-3deg);box-shadow:2px 2px 0 #14123B;"><svg width="38" height="38" viewBox="0 0 24 24" fill="#CCFF2E" stroke="#14123B" stroke-width="1.8" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"></path></svg></button>
+      <span style="font-size:12px;font-weight:800;">Beğen</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- 03 SOHBET LİSTESİ -->
+<sc-if value="{{ isChatList }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="03 Sohbet" style="position:absolute;inset:0;background:#CCFF2E;overflow:hidden;">
+  <div aria-hidden="true" style="position:absolute;top:-80px;right:-110px;width:300px;height:280px;background:#FF5C47;border-radius:42% 58% 63% 37% / 45% 55% 45% 55%;transform:rotate(20deg);"></div>
+  <sc-if value="{{ grain }}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.28;mix-blend-mode:multiply;"><filter id="grB"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#grB)"></rect></svg></sc-if>
+  <h1 style="position:absolute;top:76px;left:14px;margin:0;font-family:Anton,sans-serif;font-weight:400;font-size:98px;line-height:.9;color:#14123B;transform:rotate(-2deg);transform-origin:left top;">SOHBET</h1>
+  <span style="position:absolute;top:186px;right:22px;background:#14123B;color:#CCFF2E;border-radius:10px;padding:5px 11px;font-size:13px;font-weight:800;transform:rotate(4deg);">{{ unreadTotal }} yeni</span>
+
+  <div style="position:absolute;top:188px;left:0;right:0;">
+    <h2 style="margin:0;padding:0 22px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Yeni eşleşmeler</h2>
+    <div style="display:flex;gap:16px;overflow-x:auto;padding:14px 22px 16px;scrollbar-width:none;">
+      <button onClick="{{ goDiscover }}" style="flex:none;width:72px;display:flex;flex-direction:column;align-items:center;gap:7px;background:transparent;border:0;padding:0;cursor:pointer;color:#14123B;">
+        <span style="width:64px;height:64px;border-radius:50%;background:#6A2BFF;border:3px solid #14123B;box-sizing:border-box;display:grid;place-items:center;font-family:Anton,sans-serif;font-size:28px;color:#CCFF2E;transform:rotate(-6deg);">12</span>
+        <span style="font-size:12px;font-weight:800;">Beğenenler</span>
+      </button>
+      <sc-for list="{{ newMatches }}" as="n" hint-placeholder-count="4">
+        <button onClick="{{ n.open }}" aria-label="{{ n.aria }}" style="flex:none;width:72px;display:flex;flex-direction:column;align-items:center;gap:7px;background:transparent;border:0;padding:0;cursor:pointer;color:#14123B;">
+          <span style="width:64px;height:64px;border-radius:50%;background:{{ n.av }};border:3px solid #14123B;box-sizing:border-box;box-shadow:0 0 0 4px {{ n.ring }}, 0 0 0 6.5px #14123B;"></span>
+          <span style="font-size:13px;font-weight:800;">{{ n.name }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:334px;left:0;right:0;bottom:98px;background:#FFF3E0;border-top:3px solid #14123B;border-radius:30px 30px 0 0;overflow-y:auto;padding:18px 0 20px;box-sizing:border-box;">
+    <h2 style="margin:0 0 4px;padding:0 22px;font-size:20px;font-weight:800;">Mesajlar</h2>
+    <sc-for list="{{ chatRows }}" as="r" hint-placeholder-count="4">
+      <button onClick="{{ r.open }}" style="width:100%;display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 22px;min-height:78px;background:transparent;border:0;border-bottom:2px dashed #C9BFAE;text-align:left;cursor:pointer;color:#14123B;" style-hover="background:#FFFFFF;">
+        <span style="width:52px;height:52px;margin:2px;border-radius:50%;background:{{ r.av }};border:3px solid #14123B;box-sizing:border-box;box-shadow:0 0 0 3px {{ r.ring }};"></span>
+        <span style="display:flex;flex-direction:column;gap:3px;min-width:0;">
+          <span style="font-size:17px;font-weight:800;">{{ r.name }} <span style="font-weight:500;">{{ r.age }}</span></span>
+          <span style="font-size:14px;color:{{ r.prevColor }};font-weight:{{ r.prevWeight }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.preview }}</span>
+        </span>
+        <span style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <span style="font-size:12px;color:#4A4670;font-weight:600;">{{ r.time }}</span>
+          <sc-if value="{{ r.hasUnread }}" hint-placeholder-val="{{ false }}"><span style="min-width:24px;height:24px;border-radius:12px;background:#FF5C47;border:2px solid #14123B;box-sizing:border-box;display:grid;place-items:center;font-size:12px;font-weight:800;color:#14123B;">{{ r.unread }}</span></sc-if>
+        </span>
+      </button>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- 03b KONUŞMA -->
+<sc-if value="{{ isConv }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="03b Konuşma" style="position:absolute;inset:0;background:#FFF3E0;display:flex;flex-direction:column;overflow:hidden;">
+  <div aria-hidden="true" style="position:absolute;bottom:90px;right:-120px;width:280px;height:300px;background:#CCFF2E;border-radius:58% 42% 37% 63% / 45% 55% 45% 55%;"></div>
+  
+  <sc-if value="{{ grain }}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.28;mix-blend-mode:multiply;"><filter id="grC"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#grC)"></rect></svg></sc-if>
+
+  <header style="position:relative;z-index:5;flex:none;padding:56px 14px 10px;display:flex;align-items:center;gap:10px;background:#FFF3E0;border-bottom:3px solid #14123B;">
+    <button onClick="{{ closeConv }}" aria-label="Sohbetlere dön" style="width:44px;height:44px;border-radius:14px;background:#FFFFFF;border:2.5px solid #14123B;display:grid;place-items:center;color:#14123B;cursor:pointer;flex:none;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></button>
+    <span style="width:44px;height:44px;flex:none;border-radius:50%;background:{{ conv.av }};border:2.5px solid #14123B;box-sizing:border-box;box-shadow:0 0 0 3px #FF5C47;"></span>
+    <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
+      <span style="font-size:17px;font-weight:800;">{{ conv.name }}, {{ conv.age }}</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#3A365F;"><span style="width:9px;height:9px;border-radius:50%;background:#CCFF2E;border:2px solid #14123B;"></span>Şu an çevrimiçi</span>
+    </span>
+    <button onClick="{{ toggleMenu }}" aria-haspopup="menu" aria-expanded="{{ menuOpen }}" style="height:44px;flex:none;display:flex;align-items:center;gap:6px;padding:0 12px;border-radius:14px;background:{{ menuBtnBg }};border:2.5px solid #14123B;color:#14123B;font-size:14px;font-weight:800;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.5-3.2 7.8-7.5 9-4.3-1.2-7.5-4.5-7.5-9V6z"></path></svg>Güvenlik</button>
+  </header>
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div role="menu" style="position:absolute;z-index:20;top:122px;right:14px;width:220px;background:#FFF3E0;border:3px solid #14123B;border-radius:18px;box-shadow:6px 6px 0 #14123B;padding:6px;display:flex;flex-direction:column;gap:4px;animation:fadeUp .2s ease-out both;">
+      <button role="menuitem" onClick="{{ askBlock }}" style="min-height:52px;display:flex;align-items:center;gap:12px;padding:0 12px;border-radius:12px;background:transparent;border:0;cursor:pointer;color:#14123B;font-size:16px;font-weight:800;text-align:left;" style-hover="background:#FFFFFF;"><span style="width:32px;height:32px;border-radius:10px;background:#FF5C47;border:2px solid #14123B;display:grid;place-items:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14123B" stroke-width="2.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M6 6l12 12"></path></svg></span>Engelle</button>
+      <button role="menuitem" onClick="{{ askReport }}" style="min-height:52px;display:flex;align-items:center;gap:12px;padding:0 12px;border-radius:12px;background:transparent;border:0;cursor:pointer;color:#14123B;font-size:16px;font-weight:800;text-align:left;" style-hover="background:#FFFFFF;"><span style="width:32px;height:32px;border-radius:10px;background:#CCFF2E;border:2px solid #14123B;display:grid;place-items:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14123B" stroke-width="2.8" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg></span>Şikâyet et</button>
+    </div>
+  </sc-if>
+
+  <div style="position:relative;z-index:1;flex:1;overflow-y:auto;padding:18px 18px 10px;display:flex;flex-direction:column;gap:10px;">
+    <span style="align-self:center;background:#14123B;color:#CCFF2E;border-radius:10px;padding:5px 12px;font-size:12px;font-weight:800;transform:rotate(-2deg);margin-bottom:6px;">{{ conv.banner }}</span>
+    <sc-if value="{{ threadEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:20px;background:#FFFFFF;border:3px solid #14123B;border-radius:22px;padding:20px;box-shadow:6px 6px 0 #6A2BFF;transform:rotate(-1.5deg);display:flex;flex-direction:column;gap:8px;">
+        <span style="font-family:Anton,sans-serif;font-size:44px;line-height:1.04;color:#6A2BFF;">İLK ADIMI<br>SEN AT</span>
+        <p style="margin:0;font-size:15px;line-height:1.45;">{{ conv.name }} ile ortak noktalarınız var. Aşağıdaki buz kırıcılardan biri işini görür.</p>
+      </div>
+    </sc-if>
+    <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="5">
+      <div style="display:flex;flex-direction:column;align-items:{{ m.align }};gap:5px;">
+        <div style="max-width:78%;background:{{ m.bg }};color:{{ m.fg }};border:2.5px solid #14123B;border-radius:{{ m.radius }};box-shadow:{{ m.shadow }};transform:{{ m.transform }};transform-origin:{{ m.origin }};padding:10px 14px;font-size:15px;line-height:1.4;animation:bubbleIn .32s cubic-bezier(.34,1.56,.64,1) both;">{{ m.text }}</div>
+        <sc-if value="{{ m.showStatus }}" hint-placeholder-val="{{ false }}">
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#14123B;padding-right:4px;">
+            <sc-if value="{{ m.single }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14123B" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if>
+            <sc-if value="{{ m.double }}" hint-placeholder-val="{{ true }}"><svg width="18" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ m.tickColor }}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12.5L7 17l9.5-9.5M11 16l1 1 9.5-9.5"></path></svg></sc-if>
+            {{ m.statusText }}
+          </span>
+        </sc-if>
+      </div>
+    </sc-for>
+    <sc-if value="{{ showTyping }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;">
+        <div aria-label="{{ typingLabel }}" style="background:#FFFFFF;border:2.5px solid #14123B;border-radius:22px 22px 22px 6px;box-shadow:4px 4px 0 #FF5C47;padding:14px 16px;display:flex;gap:6px;animation:bubbleIn .3s cubic-bezier(.34,1.56,.64,1) both;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#6A2BFF;animation:typing 1s ease-in-out infinite;"></span>
+          <span style="width:9px;height:9px;border-radius:50%;background:#FF5C47;animation:typing 1s ease-in-out .15s infinite;"></span>
+          <span style="width:9px;height:9px;border-radius:50%;background:#14123B;animation:typing 1s ease-in-out .3s infinite;"></span>
+        </div>
+        <span style="font-size:12px;font-weight:700;color:#6A2BFF;padding-left:4px;">{{ typingLabel }}</span>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="position:relative;z-index:1;flex:none;padding:8px 0 0;background:#FFF3E0;border-top:3px solid #14123B;">
+    <span style="display:flex;align-items:center;gap:6px;padding:0 18px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#CCFF2E" stroke="#14123B" stroke-width="2.2" stroke-linejoin="round"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"></path></svg>Buz kırıcılar</span>
+    <div data-hscroll="1" style="display:flex;gap:10px;overflow-x:auto;padding:10px 18px 12px;scrollbar-width:none;cursor:grab;user-select:none;">
+      <sc-for list="{{ icebreakers }}" as="q" hint-placeholder-count="3">
+        <button onClick="{{ q.pick }}" style="flex:none;min-height:44px;padding:0 14px;border-radius:14px;background:{{ q.bg }};color:{{ q.fg }};border:2.5px solid #14123B;font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;transform:{{ q.transform }};box-shadow:3px 3px 0 #14123B;" style-active="box-shadow:0 0 0 #14123B;">{{ q.text }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:10px;padding:0 14px;">
+      <input value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="{{ inputPh }}" aria-label="Mesaj yaz" style="flex:1;min-width:0;height:52px;border:3px solid #14123B;border-radius:18px;padding:0 16px;font-family:inherit;font-size:15px;background:#FFFFFF;color:#14123B;outline:none;box-sizing:border-box;">
+      <button onClick="{{ onSend }}" aria-label="Gönder" style="width:52px;height:52px;flex:none;border-radius:18px;background:#CCFF2E;border:3px solid #14123B;box-shadow:4px 4px 0 #14123B;display:grid;place-items:center;color:#14123B;cursor:pointer;" style-active="transform:translate(3px,3px);box-shadow:1px 1px 0 #14123B;"><svg width="24" height="24" viewBox="0 0 24 24" fill="#14123B" stroke="#14123B" stroke-width="2" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6.5z"></path></svg></button>
+    </div>
+    <div style="height:42px;"></div>
+  </div>
+
+  <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:30;background:rgba(20,18,59,.62);display:flex;flex-direction:column;justify-content:flex-end;">
+      <div role="dialog" aria-label="{{ sheetTitle }}" style="background:#FFF3E0;border-top:3px solid #14123B;border-radius:28px 28px 0 0;padding:22px 22px 44px;display:flex;flex-direction:column;gap:12px;animation:sheetIn .3s cubic-bezier(.2,.9,.3,1.05) both;">
+        <span style="font-family:Anton,sans-serif;font-size:42px;line-height:.92;color:#14123B;">{{ sheetTitle }}</span>
+        <p style="margin:0 0 4px;font-size:15px;line-height:1.45;">{{ sheetBody }}</p>
+        <sc-if value="{{ isReport }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ reasons }}" as="rs" hint-placeholder-count="5"><button onClick="{{ rs.pick }}" style="min-height:50px;padding:0 16px;border-radius:14px;background:#FFFFFF;border:2.5px solid #14123B;text-align:left;font-size:15px;font-weight:700;color:#14123B;cursor:pointer;" style-hover="background:#CCFF2E;">{{ rs.label }}</button></sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isBlock }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ confirmBlock }}" style="min-height:56px;border-radius:16px;background:#FF5C47;border:3px solid #14123B;box-shadow:5px 5px 0 #14123B;font-size:17px;font-weight:800;color:#14123B;cursor:pointer;">Evet, engelle</button>
+        </sc-if>
+        <button onClick="{{ closeSheet }}" style="min-height:52px;border-radius:16px;background:transparent;border:3px solid #14123B;font-size:16px;font-weight:800;color:#14123B;cursor:pointer;">Vazgeç</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- 04 FİLTRELER -->
+<sc-if value="{{ isFilter }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="04 Filtreler" style="position:absolute;inset:0;background:#14123B;overflow:hidden;">
+  <div aria-hidden="true" style="position:absolute;top:-60px;right:-120px;width:320px;height:300px;background:#6A2BFF;border-radius:58% 42% 63% 37% / 45% 55% 45% 55%;"></div>
+  <div aria-hidden="true" style="position:absolute;top:470px;left:-130px;width:260px;height:260px;background:#FF5C47;border-radius:42% 58% 37% 63% / 55% 45% 55% 45%;"></div>
+  <sc-if value="{{ grain }}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.16;mix-blend-mode:screen;"><filter id="grD"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#grD)"></rect></svg></sc-if>
+
+  <div style="position:absolute;top:54px;left:0;right:0;bottom:174px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:0 22px 30px;box-sizing:border-box;">
+    <h1 style="margin:26px 0 0 -6px;font-family:Anton,sans-serif;font-weight:400;font-size:100px;line-height:.9;color:#CCFF2E;transform:rotate(-3deg);transform-origin:left top;">FİLTRE</h1>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;">
+      <span style="font-size:17px;font-weight:700;color:#FFF3E0;">Kimi görmek istersin?</span>
+      <button onClick="{{ resetF }}" style="min-height:44px;display:flex;align-items:center;gap:7px;padding:0 14px;border-radius:14px;background:#FF5C47;border:3px solid #14123B;box-shadow:3px 3px 0 #CCFF2E;color:#14123B;font-size:15px;font-weight:800;cursor:pointer;" style-active="transform:translate(2px,2px);box-shadow:1px 1px 0 #CCFF2E;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"></path></svg>Sıfırla</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:22px;margin-top:22px;">
+      <section style="background:#FFF3E0;border:3px solid #14123B;border-radius:24px;padding:18px 20px 16px;box-shadow:6px 6px 0 #CCFF2E;transform:rotate(-1deg);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;">
+          <span style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding-bottom:6px;">Yaş aralığı</span>
+          <span style="font-family:Anton,sans-serif;font-size:60px;line-height:.9;color:#6A2BFF;">{{ f.ageMin }}-{{ f.ageMax }}</span>
+        </div>
+        <div style="margin:12px 22px 0;">
+          <div ref="{{ ageRef }}" onPointerDown="{{ ageDown }}" onPointerMove="{{ ageMove }}" onPointerUp="{{ dragEnd }}" onPointerCancel="{{ dragEnd }}" style="position:relative;height:44px;touch-action:none;cursor:pointer;">
+            <div style="position:absolute;left:-22px;right:-22px;top:12px;height:20px;border-radius:999px;background:#FFFFFF;border:3px solid #14123B;box-sizing:border-box;"></div>
+            <div style="position:absolute;top:12px;height:20px;left:{{ ageL }};width:{{ ageW }};background:#6A2BFF;border:3px solid #14123B;box-sizing:border-box;"></div>
+            <div role="slider" tabIndex="0" aria-label="En düşük yaş" aria-valuemin="18" aria-valuemax="60" aria-valuenow="{{ f.ageMin }}" onKeyDown="{{ ageMinKey }}" style="position:absolute;top:0;left:{{ ageL }};width:44px;height:44px;margin-left:-22px;border-radius:50%;background:#CCFF2E;border:3px solid #14123B;box-sizing:border-box;box-shadow:3px 3px 0 #14123B;"></div>
+            <div role="slider" tabIndex="0" aria-label="En yüksek yaş" aria-valuemin="18" aria-valuemax="60" aria-valuenow="{{ f.ageMax }}" onKeyDown="{{ ageMaxKey }}" style="position:absolute;top:0;left:{{ ageR }};width:44px;height:44px;margin-left:-22px;border-radius:50%;background:#CCFF2E;border:3px solid #14123B;box-sizing:border-box;box-shadow:3px 3px 0 #14123B;"></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#4A4670;margin-top:6px;"><span>18</span><span>60+</span></div>
+      </section>
+
+      <section style="background:#FFF3E0;border:3px solid #14123B;border-radius:24px;padding:18px 20px 16px;box-shadow:6px 6px 0 #FF5C47;transform:rotate(1deg);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <span style="display:flex;flex-direction:column;gap:3px;"><span style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">Mesafe</span><span style="font-size:13px;color:#4A4670;">Bu yarıçaptaki kişiler</span></span>
+          <span style="display:flex;align-items:baseline;gap:6px;"><span style="font-family:Anton,sans-serif;font-size:88px;line-height:.9;color:#14123B;background:#CCFF2E;padding:4px 10px 0;border:3px solid #14123B;border-radius:10px;transform:rotate(3deg);animation:{{ distAnim }};">{{ f.dist }}</span><span style="font-size:20px;font-weight:800;">km</span></span>
+        </div>
+        <div style="margin:14px 22px 0;">
+          <div ref="{{ distRef }}" onPointerDown="{{ distDown }}" onPointerMove="{{ distMove }}" onPointerUp="{{ dragEnd }}" onPointerCancel="{{ dragEnd }}" style="position:relative;height:44px;touch-action:none;cursor:pointer;">
+            <div style="position:absolute;left:-22px;right:-22px;top:12px;height:20px;border-radius:999px;background:#FFFFFF;border:3px solid #14123B;box-sizing:border-box;"></div>
+            <div style="position:absolute;top:12px;height:20px;left:-22px;width:{{ distW }};border-radius:999px 0 0 999px;background:#FF5C47;border:3px solid #14123B;box-sizing:border-box;"></div>
+            <div role="slider" tabIndex="0" aria-label="Mesafe, kilometre" aria-valuemin="1" aria-valuemax="160" aria-valuenow="{{ f.dist }}" onKeyDown="{{ distKey }}" style="position:absolute;top:0;left:{{ distL }};width:44px;height:44px;margin-left:-22px;border-radius:50%;background:#CCFF2E;border:3px solid #14123B;box-sizing:border-box;box-shadow:3px 3px 0 #14123B;"></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#4A4670;margin-top:6px;"><span>1 km</span><span>160 km</span></div>
+      </section>
+
+      <section style="background:#FFF3E0;border:3px solid #14123B;border-radius:24px;padding:18px 20px 20px;box-shadow:6px 6px 0 #6A2BFF;transform:rotate(-.8deg);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;">İlgi alanları</span>
+          <span style="font-size:13px;font-weight:700;color:#4A4670;">{{ nSel }} seçili</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px 8px;margin-top:14px;">
+          <sc-for list="{{ interestChips }}" as="c" hint-placeholder-count="12">
+            <button onClick="{{ c.toggle }}" aria-pressed="{{ c.on }}" style="min-height:44px;padding:0 14px;border-radius:12px;background:{{ c.bg }};color:{{ c.fg }};border:2.5px {{ c.borderStyle }} #14123B;font-size:15px;font-weight:800;cursor:pointer;transform:{{ c.transform }};box-shadow:{{ c.shadow }};transition:transform .25s cubic-bezier(.34,1.56,.64,1), background .15s;">{{ c.label }}</button>
+          </sc-for>
+        </div>
+      </section>
+
+      <button role="switch" aria-checked="{{ f.verified }}" onClick="{{ toggleVerified }}" style="display:flex;align-items:center;gap:14px;text-align:left;background:#FFF3E0;border:3px solid #14123B;border-radius:24px;padding:16px 18px;box-shadow:6px 6px 0 #CCFF2E;transform:rotate(1deg);cursor:pointer;color:#14123B;">
+        <span style="width:48px;height:48px;flex:none;border-radius:14px;background:#6A2BFF;border:2.5px solid #14123B;display:grid;place-items:center;"><svg width="28" height="28" viewBox="0 0 24 24" fill="#CCFF2E" stroke="#14123B" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.8l2.4 1.8 3 .1.9 2.8 2.4 1.8-1 2.7 1 2.7-2.4 1.8-.9 2.8-3 .1L12 21.2l-2.4-1.8-3-.1-.9-2.8-2.4-1.8 1-2.7-1-2.7 2.4-1.8.9-2.8 3-.1z"></path><path d="M8.5 12l2.4 2.4 4.6-4.8" fill="none" stroke-width="2.4"></path></svg></span>
+        <span style="flex:1;display:flex;flex-direction:column;gap:3px;"><span style="font-size:16px;font-weight:800;line-height:1.25;">Sadece doğrulanmış profiller</span><span style="font-size:13px;color:#4A4670;">Selfie ile kimliğini doğrulayanlar</span></span>
+        <span style="width:64px;height:38px;flex:none;border-radius:999px;background:{{ tgBg }};border:3px solid #14123B;box-sizing:border-box;position:relative;transition:background .2s;"><span style="position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:{{ knobBg }};border:2.5px solid #14123B;box-sizing:border-box;transform:{{ knobT }};transition:transform .3s cubic-bezier(.34,1.56,.64,1);"></span></span>
+      </button>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:98px;height:76px;background:#CCFF2E;border-top:3px solid #14123B;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px 0 20px;box-sizing:border-box;">
+    <span aria-live="polite" style="display:flex;align-items:center;gap:10px;color:#14123B;">
+      <span style="font-family:Anton,sans-serif;font-size:50px;line-height:1;display:inline-block;animation:{{ countAnim }};">{{ count }}</span>
+      <span style="font-size:15px;font-weight:800;line-height:1.15;">kişi seni<br>bekliyor</span>
+    </span>
+    <button onClick="{{ applyF }}" style="min-height:52px;padding:0 22px;border-radius:16px;background:#6A2BFF;border:3px solid #14123B;box-shadow:4px 4px 0 #14123B;color:#FFFFFF;font-size:17px;font-weight:800;cursor:pointer;" style-active="transform:translate(3px,3px);box-shadow:1px 1px 0 #14123B;">Uygula</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ALT NAVİGASYON -->
+<sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+<nav aria-label="Ana menü" style="position:absolute;left:0;right:0;bottom:0;height:98px;padding:8px 12px 34px;box-sizing:border-box;background:#FFF3E0;border-top:3px solid #14123B;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;z-index:40;">
+  <button onClick="{{ goDiscover }}" aria-current="{{ nav1.cur }}" style="border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#14123B;">
+    <span style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px;border-radius:16px;border:2.5px solid {{ nav1.border }};background:{{ nav1.bg }};transform:{{ nav1.t }};box-shadow:{{ nav1.shadow }};transition:transform .3s cubic-bezier(.34,1.56,.64,1);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="4.5" y="4" width="12" height="16" rx="3" transform="rotate(-8 10.5 12)"></rect><path d="M17.5 6.5l2 .6-3.6 13.2-6-1.6"></path></svg><span style="font-size:11px;font-weight:800;">Keşfet</span></span>
+  </button>
+  <button onClick="{{ openMatch }}" style="border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#14123B;">
+    <span style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px;border-radius:16px;border:2.5px solid transparent;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"></path></svg><span style="font-size:11px;font-weight:800;">Eşleşme</span></span>
+  </button>
+  <button onClick="{{ goChat }}" aria-current="{{ nav3.cur }}" style="border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#14123B;position:relative;">
+    <span style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px;border-radius:16px;border:2.5px solid {{ nav3.border }};background:{{ nav3.bg }};transform:{{ nav3.t }};box-shadow:{{ nav3.shadow }};transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg><span style="font-size:11px;font-weight:800;">Sohbet</span>
+      <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:-6px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:#FF5C47;border:2px solid #14123B;box-sizing:border-box;display:grid;place-items:center;font-size:11px;font-weight:800;">{{ unreadTotal }}</span></sc-if>
+    </span>
+  </button>
+  <button onClick="{{ goFilter }}" aria-current="{{ nav4.cur }}" style="border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#14123B;">
+    <span style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px;border-radius:16px;border:2.5px solid {{ nav4.border }};background:{{ nav4.bg }};transform:{{ nav4.t }};box-shadow:{{ nav4.shadow }};transition:transform .3s cubic-bezier(.34,1.56,.64,1);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h9M18 7h2M4 17h3M12 17h8"></path><circle cx="15.5" cy="7" r="2.4"></circle><circle cx="9.5" cy="17" r="2.4"></circle></svg><span style="font-size:11px;font-weight:800;">Filtre</span></span>
+  </button>
+</nav>
+</sc-if>
+
+<!-- 02 EŞLEŞME -->
+<sc-if value="{{ matchOpen }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="02 Eşleşme" role="dialog" aria-label="{{ matchAria }}" style="position:absolute;inset:0;z-index:60;background:#6A2BFF;overflow:hidden;">
+  <div aria-hidden="true" style="position:absolute;left:50%;top:228px;width:700px;height:700px;margin:-350px 0 0 -350px;border-radius:50%;background:repeating-conic-gradient(#7B42FF 0 9deg, #6A2BFF 9deg 18deg);animation:burstSpin 1.3s cubic-bezier(.2,.8,.2,1) both;"></div>
+  <div aria-hidden="true" style="position:absolute;bottom:-90px;left:-110px;width:300px;height:280px;background:#FF5C47;border-radius:58% 42% 63% 37% / 45% 55% 45% 55%;"></div>
+  <div aria-hidden="true" style="position:absolute;top:70px;right:-70px;width:150px;height:150px;border:16px solid #CCFF2E;border-radius:50%;"></div>
+  <sc-if value="{{ grain }}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.2;mix-blend-mode:multiply;"><filter id="grE"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#grE)"></rect></svg></sc-if>
+  {{ burst }}
+  <button onClick="{{ keepSwiping }}" aria-label="Kapat" style="position:absolute;top:60px;right:18px;width:44px;height:44px;border-radius:14px;background:#FFF3E0;border:3px solid #14123B;display:grid;place-items:center;color:#14123B;cursor:pointer;z-index:3;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+  <span style="position:absolute;top:68px;left:22px;background:#14123B;color:#CCFF2E;border-radius:10px;padding:6px 12px;font-size:14px;font-weight:800;transform:rotate(-3deg);">Sen ve {{ m.name }} birbirinizi beğendiniz</span>
+
+  <div style="position:absolute;top:118px;left:0;right:0;height:220px;display:flex;justify-content:center;align-items:center;">
+    <div style="width:148px;height:188px;border-radius:26px;border:3px solid #14123B;background:{{ meAv }};box-shadow:6px 6px 0 #14123B;transform:translateX(16px) rotate(-8deg);animation:collideL .62s cubic-bezier(.3,.7,.3,1) both;"></div>
+    <div style="width:148px;height:188px;border-radius:26px;border:3px solid #14123B;background:{{ m.av }};box-shadow:6px 6px 0 #14123B;transform:translateX(-16px) rotate(8deg);animation:collideR .62s cubic-bezier(.3,.7,.3,1) both;"></div>
+    <div style="position:absolute;left:50%;top:50%;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;background:#CCFF2E;border:3px solid #14123B;box-shadow:4px 4px 0 #14123B;display:grid;place-items:center;animation:impact .8s cubic-bezier(.3,.7,.3,1) both;"><svg width="36" height="36" viewBox="0 0 24 24" fill="#FF5C47" stroke="#14123B" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"></path></svg></div>
+  </div>
+
+  <h1 style="position:absolute;top:338px;left:-10px;right:-10px;margin:0;text-align:center;font-family:Anton,sans-serif;font-weight:400;font-size:88px;line-height:1.08;color:#CCFF2E;text-shadow:6px 6px 0 #14123B;transform:rotate(-4deg);animation:titleIn .7s .3s cubic-bezier(.3,.7,.3,1) both;">BU BİR<br>EŞLEŞME!</h1>
+
+  <div style="position:absolute;top:578px;left:22px;right:22px;display:flex;flex-direction:column;gap:10px;animation:fadeUp .35s .7s ease-out both;">
+    <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#FFFFFF;">Ortak noktalarınız</span>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <sc-for list="{{ m.common }}" as="t" hint-placeholder-count="3"><span style="background:{{ t.bg }};color:{{ t.fg }};transform:{{ t.transform }};border:2.5px solid #14123B;border-radius:10px;padding:5px 12px;font-size:15px;font-weight:800;box-shadow:3px 3px 0 #14123B;">{{ t.label }}</span></sc-for>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:22px;right:22px;bottom:44px;display:flex;flex-direction:column;gap:14px;animation:fadeUp .35s .8s ease-out both;">
+    <button onClick="{{ msgMatch }}" style="min-height:60px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:18px;background:#CCFF2E;border:3px solid #14123B;box-shadow:6px 6px 0 #14123B;color:#14123B;font-size:18px;font-weight:800;cursor:pointer;" style-active="transform:translate(4px,4px);box-shadow:2px 2px 0 #14123B;"><svg width="22" height="22" viewBox="0 0 24 24" fill="#14123B" stroke="#14123B" stroke-width="2" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6.5z"></path></svg>Mesaj gönder</button>
+    <button onClick="{{ keepSwiping }}" style="min-height:52px;border-radius:18px;background:#6A2BFF;border:3px solid #FFF3E0;color:#FFFFFF;font-size:16px;font-weight:800;cursor:pointer;" style-hover="background:#5A1FE6;">Kaydırmaya devam et</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="status" style="position:absolute;left:18px;right:18px;bottom:120px;z-index:95;background:#14123B;color:#CCFF2E;border:3px solid #CCFF2E;border-radius:16px;padding:14px 16px;font-size:15px;font-weight:700;line-height:1.35;box-shadow:5px 5px 0 #6A2BFF;animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) both;">{{ toast }}</div>
+</sc-if>
+
+<div aria-hidden="true" data-chrome="1" style="position:absolute;top:0;left:0;right:0;height:54px;z-index:90;display:flex;align-items:center;justify-content:space-between;padding:4px 30px 0 46px;box-sizing:border-box;color:{{ sbColor }};pointer-events:none;">
+  <span style="font-size:16px;font-weight:700;">9:41</span>
+  <span style="display:flex;align-items:center;gap:6px;">
+    <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+    <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1.5 4.5a9.5 9.5 0 0 1 13 0M4 7.3a6 6 0 0 1 8 0"></path><circle cx="8" cy="10" r="1.2" fill="currentColor"></circle></svg>
+    <span style="width:25px;height:12px;border:1.5px solid currentColor;border-radius:4px;padding:1.5px;box-sizing:border-box;display:flex;"><span style="flex:1;background:currentColor;border-radius:1.5px;"></span></span>
+  </span>
+</div>
+<div aria-hidden="true" data-chrome="1" style="position:absolute;top:11px;left:50%;width:124px;height:36px;margin-left:-62px;background:#000;border-radius:20px;z-index:91;"></div>
+<div aria-hidden="true" data-chrome="1" style="position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:{{ sbColor }};z-index:91;"></div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;reduceMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hareket&quot;},&quot;grain&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Doku&quot;},&quot;showNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sunum&quot;}}">
+const C = { mor: '#6A2BFF', mer: '#FF5C47', lim: '#CCFF2E', lac: '#14123B', kre: '#FFF3E0', wht: '#FFFFFF' };
+const fig = (a, b, c, f) => `radial-gradient(circle at 50% 30%, ${f} 0 38px, transparent 39px), radial-gradient(ellipse 92px 84px at 50% 60%, ${f} 0 99%, transparent 100%), radial-gradient(circle at 82% 17%, ${c} 0 34px, transparent 35px), radial-gradient(ellipse 230px 170px at 0% 100%, ${b} 0 99%, transparent 100%), linear-gradient(165deg, ${a}, ${b})`;
+const stripes = (a, b, c) => `radial-gradient(circle at 30% 34%, ${c} 0 70px, transparent 71px), repeating-linear-gradient(-35deg, ${a} 0 26px, ${b} 26px 52px)`;
+const sun = (a, b, c) => `radial-gradient(circle at 50% 36%, ${c} 0 62px, transparent 63px), repeating-radial-gradient(circle at 50% 36%, ${a} 0 20px, ${b} 20px 40px)`;
+const blocks = (a, b, c) => `linear-gradient(90deg, transparent 0 46%, ${c} 46% 58%, transparent 58%), conic-gradient(from 45deg at 62% 40%, ${a} 0 25%, ${b} 25% 50%, ${a} 50% 75%, ${b} 75%)`;
+const av = (a, b, f) => `radial-gradient(circle at 50% 40%, ${f} 0 21%, transparent 22%), radial-gradient(ellipse 48% 36% at 50% 102%, ${f} 0 99%, transparent 100%), linear-gradient(160deg, ${a}, ${b})`;
+
+const ph = (n, pos, size) => `url(../img/p${n}.jpg) ${pos || '50% 18%'}/${size || 'cover'} no-repeat`;
+const tint = (n, a, b, pos, size) => `linear-gradient(160deg, ${a}66, ${b}66), ${ph(n, pos, size)}`;
+const set = (n) => [ph(n), tint(n, C.mor, C.mer, '50% 8%', '175%'), tint(n, C.lim, C.mor, '50% 26%', '235%')];
+const face = (n) => ph(n, '50% 20%', 'cover');
+const PROFILES = [
+  { name: 'Elif', age: 26, km: 3, verified: true, likesYou: true, bio: 'Hafta içi UX, hafta sonu kamp.', interests: ['Kahve', 'Kamp', 'Kitap', 'Yoga'], photos: set(1) },
+  { name: 'Deniz', age: 29, km: 5, verified: true, likesYou: false, bio: "Moda'da vinil avcısı, konser tutkunu.", interests: ['Vinil plak', 'Konser', 'Kedi', 'Sinema'], photos: set(7) },
+  { name: 'Mert', age: 31, km: 8, verified: false, likesYou: false, bio: 'Sabah koşusu, akşam mangal.', interests: ['Koşu', 'Yemek', 'Dağcılık'], photos: set(2) },
+  { name: 'Zeynep', age: 24, km: 2, verified: true, likesYou: true, bio: 'Analog fotoğraf ve kötü espriler.', interests: ['Fotoğraf', 'Kahve', 'Konser', 'Kedi'], photos: set(3) },
+];
+const PEOPLE = {
+  Elif: { age: 26, av: face(1) }, Deniz: { age: 29, av: face(7) },
+  Mert: { age: 31, av: face(2) }, Zeynep: { age: 24, av: face(3) },
+  Kaan: { age: 28, av: face(8) }, Ece: { age: 25, av: face(10) },
+  Buse: { age: 30, av: face(9) }, Selin: { age: 27, av: face(6) },
+};
+const ME_AV = face(4);
+const MY_INTERESTS = ['Kahve', 'Kamp', 'Konser', 'Kitap', 'Vinil plak', 'Fotoğraf'];
+const RINGS = [C.mor, C.mer, C.lac, C.wht];
+const ROTS = [-4, 3, -2, 5, -3, 2];
+const TAGC = [{ bg: C.lim, fg: C.lac }, { bg: C.mer, fg: C.lac }, { bg: C.mor, fg: C.wht }, { bg: C.wht, fg: C.lac }];
+const tagify = (list) => list.map((t, i) => ({ label: t, ...TAGC[i % 4], transform: `rotate(${ROTS[i % 6]}deg)` }));
+const up = (s) => s.toLocaleUpperCase('tr-TR');
+const ALL_INTERESTS = ['Kahve', 'Kamp', 'Konser', 'Kitap', 'Yoga', 'Koşu', 'Sinema', 'Kedi', 'Dağcılık', 'Fotoğraf', 'Yemek', 'Vinil plak'];
+const DEF_F = { ageMin: 24, ageMax: 32, dist: 25, interests: ['Kahve', 'Kamp', 'Konser'], verified: false };
+const raw = (f) => ((f.ageMax - f.ageMin + 1) / 43) * Math.pow(f.dist / 100, 0.7) * (f.verified ? 0.62 : 1) * (f.interests.length ? Math.min(1, 0.45 + 0.09 * f.interests.length) : 1);
+const countOf = (f) => Math.max(0, Math.round(248 * raw(f) / raw(DEF_F)));
+const ICE = ['Pazar sabahı ideal kahvaltın ne?', 'En son hangi konsere gittin?', 'Şehirde gizli favori mekânın?', 'Kampta vazgeçemediğin tek şey?'];
+const REPLIES = ['Haha, bunu ilk kez biri soruyor. Biraz düşüneyim…', 'Bence bunu bir kahve eşliğinde konuşalım.', 'İyi yakaladın. Peki sen ne dersin?'];
+const ANSWERS = [
+  { keys: ['kahvaltı'], by: {
+    Elif: 'Kamp ocağında demlenmiş çay, yanında simit ve bolca domates. Şehirdeysem menemen, soğansız. Senin?',
+    Deniz: 'Geç kalkarım, o yüzden benimki brunch: sucuklu yumurta, arkada bir plak dönüyor olacak. Sen erkenci misin?',
+    Zeynep: 'Açık hava, serpme kahvaltı, masada en az üç çeşit reçel. Fotoğrafını çekmeden başlamam. Sen tatlıcı mısın tuzlucu mu?',
+    _: 'Menemen, soğanlı. Tartışmaya kapalı. Yanına da ince belli bardakta çay. Seninki ne?' } },
+  { keys: ['konser'], by: {
+    Elif: 'Geçen ay açık havada Büyük Ev Ablukada. Yağmur başladı, kimse kıpırdamadı. Sen en son kime gittin?',
+    Deniz: 'İki hafta önce Zorlu\'da Altın Gün. Plağını da oradan aldım. Canlı müzikte favorin kim?',
+    Zeynep: 'Kadıköy\'de küçük bir sahnede Lalalar. Makineyi götürdüm, bir makara film bitti. Sen en son neredeydin?',
+    _: 'Geçen ay Harbiye\'deydim, sesim iki gün çıkmadı. Sen en son kimi dinledin?' } },
+  { keys: ['mekân', 'mekan'], by: {
+    Elif: 'Yeldeğirmeni\'nde arka bahçesi olan küçük bir kahveci. Adını ilk buluşmada söylerim. Seninki nerede?',
+    Deniz: 'Moda\'da bodrum katta bir plakçı. Tabelası bile yok, bilen biliyor. Senin gizli yerin var mı?',
+    Zeynep: 'Balat\'ta çatısından Haliç görünen bir çay bahçesi. Gün batımında ışık çok güzel oluyor. Sen nereye kaçıyorsun?',
+    _: 'Karaköy\'de arka sokakta bir lokanta, menüsü her gün değişiyor. Sen nereye gidersin?' } },
+  { keys: ['kamp'], by: {
+    Elif: 'Moka pot. Sabah kahvesi olmadan çadırdan çıkmam. Sen çadırcı mısın karavancı mı?',
+    Deniz: 'İtiraf edeyim, en son kampım lisedeydi. Ama bluetooth hoparlör olmadan gitmezdim. Sen sık gider misin?',
+    Zeynep: 'Analog makinem ve yedek film. Geri kalan her şeyi unutabilirim. Sen nereye kamp yaparsın?',
+    _: 'Kafa lambası. Bir kere unuttum, bir daha asla. Senin vazgeçilmezin ne?' } },
+  { keys: ['selam', 'merhaba', 'nasılsın', 'naber'], by: {
+    _: 'Selam! İyiyim, eşleştiğimize sevindim. Sen nasılsın, günün nasıl geçiyor?' } },
+];
+const answerFor = (text, who) => {
+  const t = (text || '').toLocaleLowerCase('tr');
+  const a = ANSWERS.find((x) => x.keys.some((k) => t.includes(k)));
+  return a ? (a.by[who] || a.by._) : null;
+};
+const REASONS = ['Sahte profil', 'Taciz veya hakaret', 'Uygunsuz fotoğraf', '18 yaşından küçük olabilir', 'Diğer'];
+const CONF = Array.from({ length: 40 }, (_, i) => {
+  const a = (i / 40) * Math.PI * 2 + (i % 3) * 0.21; const d = 140 + ((i * 37) % 130);
+  return { x: Math.cos(a) * d, y: Math.sin(a) * d * 1.2 + 50, r: ((i * 73) % 360) + 200, c: [C.lim, C.mer, C.kre, C.lac][i % 4], w: i % 3 === 0 ? 12 : 14, h: i % 3 === 0 ? 12 : (i % 2 ? 7 : 20), br: i % 3 === 0 ? '50%' : '3px', delay: 0.36 + (i % 5) * 0.03 };
+});
+const nowStr = () => { const d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+class Component extends DCLogic {
+  ageRef = React.createRef();
+  distRef = React.createRef();
+  timers = [];
+  state = {
+    tab: 'discover', index: 0, photo: 0, dx: 0, dy: 0, dragging: false, flying: null, snap: false,
+    pops: { like: 0, nope: 0, fav: 0 }, match: null, matchKey: 0, matched: [],
+    threads: {
+      Deniz: [
+        { from: 'them', text: 'Profilinde kamp fotoğrafı gördüm. En son nereye gittin?' },
+        { from: 'me', text: 'Kazdağları! Sabah sisi inanılmazdı.' },
+        { from: 'them', text: 'Ciddi mi, ben de geçen ay oradaydım.' },
+        { from: 'them', text: "Kadıköy'deki o küçük vinil dükkânını biliyor musun?" },
+        { from: 'me', text: "Moda'daki mi? Cumartesileri hep oradayım.", status: 'read', time: '21:42' },
+      ],
+      Zeynep: [{ from: 'them', text: 'Pazar kahvaltısı fikri hâlâ geçerli mi?' }, { from: 'them', text: 'Bu arada sonunda analog makine aldım!' }],
+      Mert: [{ from: 'them', text: 'Haha, anlaştık o zaman. Pazar 10:00!' }],
+      Selin: [{ from: 'me', text: 'Önerdiğin podcast çok iyiydi.', status: 'read', time: 'Salı' }],
+    },
+    times: { Deniz: '2 dk', Zeynep: '20:15', Mert: 'Dün', Selin: 'Salı' },
+    unread: { Zeynep: 2 },
+    chatWith: 'Deniz', convOpen: false, typingFor: 'Deniz', draft: '', menu: false, sheet: null, denizDone: false,
+    f: { ...DEF_F }, countFlip: 0, distFlip: 0, toast: null, mediaRM: false,
+  };
+
+  componentDidMount() {
+    this.mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.onMq = () => this.setState({ mediaRM: this.mq.matches });
+    this.onMq();
+    this.mq.addEventListener('change', this.onMq);
+  }
+  componentWillUnmount() { this.mq && this.mq.removeEventListener('change', this.onMq); this.timers.forEach(clearTimeout); }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+  rm() { return !!this.props.reduceMotion || this.state.mediaRM; }
+  showToast(t) { this.setState({ toast: t }); clearTimeout(this.toastT); this.toastT = setTimeout(() => this.setState({ toast: null }), 2600); }
+
+  // ---- swipe
+  fling(dir) {
+    const s = this.state;
+    if (s.flying || s.index >= PROFILES.length) return;
+    const dx = dir === 'like' ? 560 : dir === 'nope' ? -560 : s.dx;
+    const dy = dir === 'fav' ? -950 : s.dy;
+    this.setState({ dragging: false, flying: dir, dx, dy, pops: { ...s.pops, [dir]: s.pops[dir] + 1 } });
+    this.later(() => {
+      const p = PROFILES[this.state.index];
+      const isMatch = dir !== 'nope' && p.likesYou;
+      this.setState((st) => ({
+        index: st.index + 1, photo: 0, dx: 0, dy: 0, flying: null, snap: true,
+        ...(isMatch ? { match: p.name, matchKey: st.matchKey + 1, matched: st.matched.includes(p.name) ? st.matched : [p.name, ...st.matched], threads: st.threads[p.name] ? st.threads : { ...st.threads, [p.name]: [] }, times: { ...st.times, [p.name]: 'Şimdi' } } : {}),
+      }));
+      requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ snap: false })));
+    }, this.rm() ? 40 : 300);
+  }
+  cardDown = (e) => {
+    if (this.state.flying) return;
+    this.drag = { x: e.clientX, y: e.clientY, moved: false, rect: e.currentTarget.getBoundingClientRect() };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    this.setState({ dragging: true });
+  };
+  cardMove = (e) => {
+    if (!this.drag) return;
+    const dx = e.clientX - this.drag.x, dy = e.clientY - this.drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 6) this.drag.moved = true;
+    this.setState({ dx, dy });
+  };
+  cardUp = (e) => {
+    const d = this.drag; this.drag = null;
+    if (!d) return;
+    if (!d.moved) {
+      const p = PROFILES[this.state.index]; if (!p) return;
+      const right = e.clientX - d.rect.left > d.rect.width / 2;
+      this.setState((s) => ({ dragging: false, dx: 0, dy: 0, photo: clamp(s.photo + (right ? 1 : -1), 0, p.photos.length - 1) }));
+      return;
+    }
+    const { dx, dy } = this.state;
+    if (dx > 110) this.fling('like');
+    else if (dx < -110) this.fling('nope');
+    else if (dy < -140 && Math.abs(dx) < 90) this.fling('fav');
+    else this.setState({ dragging: false, dx: 0, dy: 0 });
+  };
+
+  // ---- chat
+  openConv(name) {
+    this.setState((s) => ({ tab: 'chat', convOpen: true, chatWith: name, menu: false, sheet: null, match: null, draft: '', unread: { ...s.unread, [name]: 0 }, threads: s.threads[name] ? s.threads : { ...s.threads, [name]: [] } }));
+    if (name === 'Deniz' && !this.state.denizDone) {
+      this.setState({ typingFor: 'Deniz', denizDone: true });
+      this.later(() => {}, 0);
+      this.later(() => this.pushMsg('Deniz', { from: 'them', text: 'O zaman cumartesi orada görüşelim mi? 14:00 gibi uğrarım.' }, true), 2600);
+    }
+  }
+  pushMsg(who, msg, stopTyping) {
+    this.setState((s) => ({ threads: { ...s.threads, [who]: [...(s.threads[who] || []), msg] }, times: { ...s.times, [who]: 'Şimdi' }, ...(stopTyping ? { typingFor: null } : {}) }));
+  }
+  setStatus(who, st) {
+    this.setState((s) => ({ threads: { ...s.threads, [who]: s.threads[who].map((m) => (m.from === 'me' && m.status && m.status !== 'read' ? { ...m, status: st } : m)) } }));
+  }
+  send(text) {
+    text = (text || '').trim(); if (!text) return;
+    const who = this.state.chatWith;
+    this.pushMsg(who, { from: 'me', text, status: 'sent', time: nowStr() });
+    this.setState({ draft: '' });
+    this.later(() => this.setStatus(who, 'delivered'), 600);
+    this.later(() => this.setStatus(who, 'read'), 1300);
+    this.later(() => this.setState({ typingFor: who }), 1600);
+    this.later(() => this.pushMsg(who, { from: 'them', text: answerFor(text, who) || REPLIES[(this.state.threads[who] || []).length % REPLIES.length] }, true), 3300);
+  }
+
+  // ---- filters
+  setF(patch) {
+    this.setState((s) => {
+      const f = { ...s.f, ...patch };
+      const changed = countOf(f) !== countOf(s.f);
+      return { f, countFlip: changed ? s.countFlip + 1 : s.countFlip, distFlip: patch.dist !== undefined && patch.dist !== s.f.dist ? s.distFlip + 1 : s.distFlip };
+    });
+  }
+  valFrom(e, ref, min, max) {
+    const r = ref.current.getBoundingClientRect();
+    return Math.round(min + clamp((e.clientX - r.left) / r.width, 0, 1) * (max - min));
+  }
+  applyAge(v) {
+    const f = this.state.f;
+    if (this.ageWhich === 'min') this.setF({ ageMin: Math.min(v, f.ageMax - 5) });
+    else this.setF({ ageMax: Math.max(v, f.ageMin + 5) });
+  }
+  ageDown = (e) => {
+    const v = this.valFrom(e, this.ageRef, 18, 60), f = this.state.f;
+    const dMin = Math.abs(v - f.ageMin), dMax = Math.abs(v - f.ageMax);
+    this.ageWhich = dMin < dMax ? 'min' : dMin > dMax ? 'max' : (v < f.ageMin ? 'min' : 'max');
+    this.sliding = 'age'; e.currentTarget.setPointerCapture(e.pointerId); this.applyAge(v);
+  };
+  ageMove = (e) => { if (this.sliding === 'age') this.applyAge(this.valFrom(e, this.ageRef, 18, 60)); };
+  distDown = (e) => { this.sliding = 'dist'; e.currentTarget.setPointerCapture(e.pointerId); this.setF({ dist: this.valFrom(e, this.distRef, 1, 160) }); };
+  distMove = (e) => { if (this.sliding === 'dist') this.setF({ dist: this.valFrom(e, this.distRef, 1, 160) }); };
+  dragEnd = () => { this.sliding = null; };
+  keyDelta(e) { const k = e.key; if (k === 'ArrowLeft' || k === 'ArrowDown') return -1; if (k === 'ArrowRight' || k === 'ArrowUp') return 1; return 0; }
+
+  go(key) {
+    if (key === 'discover') this.setState({ tab: 'discover', match: null, convOpen: false });
+    else if (key === 'match') this.openMatch();
+    else if (key === 'chat') this.setState({ tab: 'chat', convOpen: false, match: null });
+    else if (key === 'conv') this.openConv('Deniz');
+    else if (key === 'filter') this.setState({ tab: 'filter', match: null, convOpen: false });
+  }
+  openMatch = () => {
+    const name = this.state.matched[0] || 'Elif';
+    this.setState((s) => ({ match: name, matchKey: s.matchKey + 1, menu: false, sheet: null }));
+  };
+
+  renderVals() {
+    const s = this.state, rm = this.rm(), f = s.f;
+    const P = PROFILES;
+    const p = P[s.index], b1 = P[s.index + 1], b2 = P[s.index + 2];
+    const fav = s.flying === 'fav' || (s.dy < -40 && Math.abs(s.dx) < 60);
+    const ty = s.flying === 'fav' ? s.dy : s.dy * 0.35;
+    const prog = clamp(Math.max(Math.abs(s.dx), Math.abs(s.dy) * 0.6) / 220, 0, 1);
+    const tr = s.snap || s.dragging ? 'none' : s.flying ? 'transform .3s cubic-bezier(.3,.6,.4,1)' : 'transform .38s cubic-bezier(.34,1.56,.64,1)';
+    const popAnim = (n) => (n ? `${n % 2 ? 'popA' : 'popB'} .34s cubic-bezier(.34,1.56,.64,1)` : 'none');
+    const tintBg = fav ? C.mor : s.dx > 0 ? C.lim : C.mer;
+    const tintOp = fav ? clamp(-s.dy / 400, 0, 0.45) : clamp(Math.abs(s.dx) / 260, 0, 0.5);
+
+    const thread = s.threads[s.chatWith] || [];
+    const lastMe = thread.map((m) => m.from).lastIndexOf('me');
+    const msgs = thread.map((m, i) => {
+      const me = m.from === 'me', st = m.status;
+      return {
+        text: m.text, align: me ? 'flex-end' : 'flex-start',
+        bg: me ? C.mor : C.wht, fg: me ? C.wht : C.lac,
+        radius: me ? '22px 22px 6px 22px' : '22px 22px 22px 6px',
+        shadow: me ? `4px 4px 0 ${C.lac}` : `4px 4px 0 ${C.mer}`,
+        transform: `rotate(${me ? (i % 2 ? 0.8 : -0.6) : (i % 2 ? -0.8 : 0.6)}deg)`, origin: me ? 'bottom right' : 'bottom left',
+        showStatus: me && i === lastMe && !!st, single: st === 'sent', double: st === 'delivered' || st === 'read',
+        tickColor: st === 'read' ? C.mor : C.lac,
+        statusText: st === 'read' ? `Okundu · ${m.time || ''}` : st === 'delivered' ? 'İletildi' : 'Gönderildi',
+      };
+    });
+    const person = PEOPLE[s.chatWith] || { age: '', av: ME_AV };
+    const unreadTotal = Object.values(s.unread).reduce((a, b) => a + b, 0);
+    const order = ['Deniz', 'Zeynep', 'Mert', 'Selin'];
+    const extra = Object.keys(s.threads).filter((n) => !order.includes(n) && s.threads[n].length);
+    const chatRows = [...extra, ...order].map((n, i) => {
+      const th = s.threads[n] || []; const last = th[th.length - 1];
+      const typing = s.typingFor === n;
+      return {
+        name: n, age: PEOPLE[n].age, av: PEOPLE[n].av, ring: RINGS[i % 4], time: s.times[n] || '',
+        preview: typing ? 'yazıyor…' : last ? (last.from === 'me' ? 'Sen: ' : '') + last.text : 'Yeni eşleşme, ilk mesajı at',
+        prevColor: typing ? C.mor : '#4A4670', prevWeight: typing || s.unread[n] ? 700 : 500,
+        unread: s.unread[n] || 0, hasUnread: !!s.unread[n], open: () => this.openConv(n),
+      };
+    });
+    const nm = [...s.matched.filter((n) => !(s.threads[n] || []).length), 'Kaan', 'Ece', 'Buse'];
+    const newMatches = nm.map((n, i) => ({ name: n, av: PEOPLE[n].av, ring: RINGS[i % 4], aria: `${n} ile sohbet başlat`, open: () => this.openConv(n) }));
+
+    const mp = s.match ? PROFILES.find((x) => x.name === s.match) : null;
+    const common = mp ? mp.interests.filter((t) => MY_INTERESTS.includes(t)) : [];
+    const burst = s.match && !rm ? React.createElement('div', { key: s.matchKey, 'aria-hidden': true, style: { position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 } },
+      [C.lim, C.mer].map((c, i) => React.createElement('div', { key: 'r' + i, style: { position: 'absolute', left: '50%', top: 228, width: 180, height: 180, borderRadius: '50%', border: `8px solid ${c}`, animation: `ring .9s ${0.36 + i * 0.12}s cubic-bezier(.2,.7,.3,1) both` } })),
+      CONF.map((q, i) => React.createElement('span', { key: i, style: { position: 'absolute', left: '50%', top: 228, width: q.w, height: q.h, background: q.c, border: `2px solid ${C.lac}`, borderRadius: q.br, '--x': q.x + 'px', '--y': q.y + 'px', '--r': q.r + 'deg', animation: `confetti 1.1s ${q.delay}s cubic-bezier(.15,.7,.3,1) both` } }))
+    ) : null;
+
+    const navOn = { bg: C.lim, border: C.lac, t: 'rotate(-3deg) translateY(-2px)', shadow: `3px 3px 0 ${C.lac}`, cur: 'page' };
+    const navOff = { bg: 'transparent', border: 'transparent', t: 'none', shadow: 'none', cur: 'false' };
+    const isConv = s.tab === 'chat' && s.convOpen;
+    const dark = s.tab === 'filter' || !!s.match;
+    const ageP = (v) => ((v - 18) / 42) * 100;
+    const distP = ((f.dist - 1) / 159) * 100;
+    const curKey = s.match ? 'match' : s.tab === 'chat' ? (s.convOpen ? 'conv' : 'chat') : s.tab;
+    const SW = [['discover', '01 Keşfet'], ['match', '02 Eşleşme'], ['chat', '03 Sohbet'], ['conv', '03b Konuşma'], ['filter', '04 Filtreler']];
+
+    return {
+      showNotes: this.props.showNotes ?? true, grain: this.props.grain ?? true, rmAttr: rm ? '1' : '0',
+      switcher: SW.map(([k, l]) => ({ label: l, bg: curKey === k ? C.lac : C.kre, fg: curKey === k ? C.lim : C.lac, go: () => this.go(k) })),
+      isDiscover: s.tab === 'discover', isChatList: s.tab === 'chat' && !s.convOpen, isConv, isFilter: s.tab === 'filter',
+      showNav: !isConv, sbColor: dark ? C.kre : C.lac,
+      nav1: s.tab === 'discover' ? navOn : navOff, nav3: s.tab === 'chat' ? navOn : navOff, nav4: s.tab === 'filter' ? navOn : navOff,
+      goDiscover: () => this.go('discover'), goChat: () => this.go('chat'), goFilter: () => this.go('filter'), openMatch: this.openMatch,
+      distLabel: `${f.dist} km`,
+      hasTop: !!p, hasBack1: !!b1, hasBack2: !!b2, isEmpty: !p, actOp: p ? 1 : 0.3, actPe: p ? 'auto' : 'none',
+      top: p ? { upper: up(p.name), age: p.age, km: `${p.km} km uzakta`, photo: p.photos[s.photo], bio: p.bio, tags: tagify(p.interests), verified: p.verified, aria: `${p.name}, ${p.age}. Fotoğraf ${s.photo + 1}/${p.photos.length}. Sürükle ya da alttaki butonları kullan.`, bars: p.photos.map((_, i) => ({ bg: i === s.photo ? C.kre : 'rgba(20,18,59,.4)' })) } : {},
+      back1: b1 ? { upper: up(b1.name), age: b1.age, photo: b1.photos[0] } : {}, back2: b2 ? { photo: b2.photos[0] } : {},
+      topT: `translate(${s.dx}px, ${ty}px) rotate(${s.dx / 16}deg)`, topTr: tr,
+      back1T: `translateY(${10 * (1 - prog)}px) rotate(${-4 * (1 - prog)}deg) scale(${0.95 + 0.05 * prog})`,
+      back2T: `translateY(${22 - 12 * prog}px) rotate(${5 - 9 * prog}deg) scale(${0.9 + 0.05 * prog})`,
+      backTr: s.snap || s.dragging ? 'none' : 'transform .3s cubic-bezier(.3,.6,.4,1)',
+      tintBg, tintOp,
+      likeOp: fav ? 0 : clamp(s.dx / 100, 0, 1), nopeOp: fav ? 0 : clamp(-s.dx / 100, 0, 1), favOp: fav ? clamp(-s.dy / 120, 0, 1) : 0,
+      likeT: `rotate(-14deg) scale(${1.3 - 0.3 * clamp(s.dx / 100, 0, 1)})`, nopeT: `rotate(14deg) scale(${1.3 - 0.3 * clamp(-s.dx / 100, 0, 1)})`,
+      cardDown: this.cardDown, cardMove: this.cardMove, cardUp: this.cardUp,
+      onLike: () => this.fling('like'), onNope: () => this.fling('nope'), onFav: () => this.fling('fav'),
+      likeAnim: popAnim(s.pops.like), nopeAnim: popAnim(s.pops.nope), favAnim: popAnim(s.pops.fav),
+      restart: () => this.setState({ index: 0, photo: 0 }),
+
+      matchOpen: !!s.match, burst, meAv: ME_AV, matchAria: s.match ? `${s.match} ile eşleştiniz` : '',
+      m: { name: s.match || '', av: s.match ? PEOPLE[s.match].av : '', common: tagify(common.length ? common : ['Kahve']) },
+      msgMatch: () => this.openConv(s.match), keepSwiping: () => this.setState({ match: null, tab: 'discover', convOpen: false }),
+
+      unreadTotal, hasUnread: unreadTotal > 0, chatRows, newMatches,
+      conv: { name: s.chatWith, age: person.age, av: person.av, banner: s.chatWith === 'Deniz' ? "12 Kasım'da eşleştiniz · Ortak: Vinil plak, Konser" : 'Bugün eşleştiniz' },
+      closeConv: () => this.setState({ convOpen: false, menu: false, sheet: null }),
+      msgs, threadEmpty: thread.length === 0, showTyping: s.typingFor === s.chatWith, typingLabel: `${s.chatWith} yazıyor…`,
+      icebreakers: ICE.map((t, i) => ({ text: t, bg: TAGC[i % 4].bg, fg: TAGC[i % 4].fg, transform: `rotate(${i % 2 ? 1.5 : -1.5}deg)`, pick: () => this.setState({ draft: t }) })),
+      draft: s.draft, inputPh: `${s.chatWith} için bir mesaj yaz…`,
+      onDraft: (e) => this.setState({ draft: e.target.value }), onDraftKey: (e) => { if (e.key === 'Enter') this.send(s.draft); }, onSend: () => this.send(s.draft),
+      menuOpen: s.menu, menuBtnBg: s.menu ? C.lim : C.wht, toggleMenu: () => this.setState({ menu: !s.menu }),
+      askBlock: () => this.setState({ menu: false, sheet: 'block' }), askReport: () => this.setState({ menu: false, sheet: 'report' }),
+      sheetOpen: !!s.sheet, isBlock: s.sheet === 'block', isReport: s.sheet === 'report',
+      sheetTitle: s.sheet === 'block' ? `${up(s.chatWith)} ENGELLENSİN Mİ?` : 'ŞİKÂYET ET',
+      sheetBody: s.sheet === 'block' ? `${s.chatWith} seni göremez ve sana mesaj atamaz. Engellendiğini bilmez.` : 'Neyi bildiriyorsun? Bildirimin gizli kalır; ekibimiz 24 saat içinde inceler.',
+      reasons: REASONS.map((r) => ({ label: r, pick: () => { this.setState({ sheet: null }); this.showToast(`Teşekkürler. "${r}" bildirimin alındı.`); } })),
+      confirmBlock: () => { this.setState({ sheet: null, convOpen: false }); this.showToast(`${s.chatWith} engellendi. Ayarlar › Engellenenler'den geri alabilirsin.`); },
+      closeSheet: () => this.setState({ sheet: null }),
+
+      f, count: countOf(f), countAnim: s.countFlip ? `${s.countFlip % 2 ? 'countA' : 'countB'} .3s cubic-bezier(.34,1.56,.64,1)` : 'none',
+      distAnim: s.distFlip ? `${s.distFlip % 2 ? 'countA' : 'countB'} .25s ease-out` : 'none',
+      ageRef: this.ageRef, distRef: this.distRef, ageDown: this.ageDown, ageMove: this.ageMove, distDown: this.distDown, distMove: this.distMove, dragEnd: this.dragEnd,
+      ageL: ageP(f.ageMin) + '%', ageR: ageP(f.ageMax) + '%', ageW: ageP(f.ageMax) - ageP(f.ageMin) + '%',
+      distL: distP + '%', distW: `calc(${distP}% + 22px)`,
+      ageMinKey: (e) => { const d = this.keyDelta(e); if (d) { e.preventDefault(); this.setF({ ageMin: clamp(f.ageMin + d, 18, f.ageMax - 5) }); } },
+      ageMaxKey: (e) => { const d = this.keyDelta(e); if (d) { e.preventDefault(); this.setF({ ageMax: clamp(f.ageMax + d, f.ageMin + 5, 60) }); } },
+      distKey: (e) => { const d = this.keyDelta(e); if (d) { e.preventDefault(); this.setF({ dist: clamp(f.dist + d, 1, 160) }); } },
+      nSel: f.interests.length,
+      interestChips: ALL_INTERESTS.map((t, i) => {
+        const on = f.interests.includes(t); const c = TAGC[i % 3];
+        return { label: t, on: on ? 'true' : 'false', bg: on ? c.bg : C.wht, fg: on ? c.fg : C.lac, borderStyle: on ? 'solid' : 'dashed', transform: on ? `rotate(${ROTS[i % 6]}deg)` : 'none', shadow: on ? `3px 3px 0 ${C.lac}` : 'none',
+          toggle: () => this.setF({ interests: on ? f.interests.filter((x) => x !== t) : [...f.interests, t] }) };
+      }),
+      toggleVerified: () => this.setF({ verified: !f.verified }),
+      tgBg: f.verified ? C.mor : C.wht, knobBg: f.verified ? C.lim : C.lac, knobT: f.verified ? 'translateX(26px)' : 'none',
+      resetF: () => { this.setF({ ...DEF_F }); this.showToast('Filtreler varsayılana döndü.'); },
+      applyF: () => { this.setState({ tab: 'discover', index: 0, photo: 0 }); this.showToast(`${countOf(f)} kişi listende. İyi kaydırmalar!`); },
+      toastOpen: !!s.toast, toast: s.toast,
+    };
+  }
+}
+</script>
+<script>
+(function(){
+  function fit(){
+    var sh=document.querySelector('[data-shell]');
+    if(!sh){setTimeout(fit,150);return}
+    sh.style.zoom=window.innerWidth<=760?Math.min(window.innerWidth/393,window.innerHeight/852):'';
+  }
+  window.addEventListener('resize',fit);fit();
+})();
+</script>
+<script>
+(function(){
+  var el=null,x0=0,s0=0,moved=false;
+  document.addEventListener('mousedown',function(e){var t=e.target.closest&&e.target.closest('[data-hscroll]');if(!t)return;el=t;x0=e.clientX;s0=t.scrollLeft;moved=false});
+  document.addEventListener('mousemove',function(e){if(!el)return;var d=e.clientX-x0;if(Math.abs(d)>6)moved=true;if(moved){el.scrollLeft=s0-d;e.preventDefault()}});
+  document.addEventListener('mouseup',function(){if(!el)return;el=null;setTimeout(function(){moved=false},60)});
+  document.addEventListener('click',function(e){if(moved&&e.target.closest&&e.target.closest('[data-hscroll]')){e.stopPropagation();e.preventDefault()}},true);
+  document.addEventListener('wheel',function(e){var t=e.target.closest&&e.target.closest('[data-hscroll]');if(!t||Math.abs(e.deltaX)>Math.abs(e.deltaY))return;t.scrollLeft+=e.deltaY;e.preventDefault()},{passive:false});
+})();
+</script>
+</body>
+</html>

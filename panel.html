@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rastla · yönetim paneli demosu</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+:root{--ink:#17191F;--paper:#F4F5F7;--nar:#C4122F;--firuze:#0F8B83;--sis:#8A909C;--line:#E3E5EA}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Figtree,system-ui,sans-serif;color:var(--ink);background:var(--paper);display:flex;min-height:100vh;font-size:14.5px}
+h1,h2,.disp{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;letter-spacing:-.02em}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+nav{width:232px;background:var(--ink);color:#fff;padding:22px 14px;display:flex;flex-direction:column;gap:4px;flex:none}
+nav .disp{font-size:26px;padding:0 10px 18px}
+nav .disp small{display:block;font:500 12px Figtree;color:#8A909C;letter-spacing:0;margin-top:2px}
+nav button{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#B9BEC8;font-weight:500;text-align:left}
+nav button i{font-size:19px}
+nav button.on{background:#2A2D36;color:#fff}
+nav button b{margin-left:auto;background:var(--nar);color:#fff;font-size:11px;border-radius:9px;padding:1px 7px}
+nav a{margin-top:auto;color:#B9BEC8;text-decoration:none;display:flex;gap:10px;align-items:center;padding:10px 12px;font-weight:500}
+main{flex:1;padding:28px 32px;min-width:0}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.head h1{font-size:28px}
+.head span{color:var(--sis)}
+.view{display:none}.view.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.card{background:#fff;border-radius:16px;padding:18px}
+.kpi small{color:var(--sis);font-size:13px}
+.kpi .disp{font-size:30px;margin-top:6px}
+.kpi em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--firuze)}
+.kpi em.d{color:var(--nar)}
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+.card h2{font-size:17px;margin-bottom:14px}
+.bars{display:flex;align-items:flex-end;gap:10px;height:180px}
+.bars div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;font-size:11.5px;color:var(--sis);height:100%}
+.bars i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:var(--ink)}
+.bars div:last-child i{background:var(--nar)}
+.fun div{margin-bottom:12px}
+.fun span{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+.fun i{display:block;height:8px;border-radius:4px;background:var(--firuze)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12.5px;color:var(--sis);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border:0}
+.u{display:flex;align-items:center;gap:10px;font-weight:600}
+.u img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.u small{display:block;font-weight:400;color:var(--sis);font-size:12.5px}
+.tag{font-size:12px;font-weight:600;padding:3px 9px;border-radius:10px;background:#E6F3F2;color:var(--firuze);white-space:nowrap}
+.tag.r{background:#FBE9EC;color:var(--nar)}.tag.g{background:#EEF0F3;color:#5B616D}.tag.y{background:#FFF3D6;color:#8A5A00}
+.b{padding:7px 12px;border-radius:9px;font-weight:600;font-size:13px;border:1.5px solid var(--line);background:#fff;margin-left:4px}
+.b.k{background:var(--ink);color:#fff;border-color:var(--ink)}.b.n{color:var(--nar)}
+.tools{display:flex;gap:10px;margin-bottom:14px}
+.tools input,.tools select{font:inherit;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);background:#fff;outline:0}
+.tools input{flex:1;max-width:320px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.ph{background:#fff;border-radius:16px;overflow:hidden}
+.ph img{width:100%;height:210px;object-fit:cover;display:block}
+.ph div{padding:10px 12px}
+.ph p{font-weight:600;margin-bottom:8px}.ph p small{display:block;font-weight:400;color:var(--sis)}
+.ph .b{margin:0 4px 0 0}
+.set{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.set:last-child{border:0}.set small{display:block;color:var(--sis)}
+.set input{margin-left:auto;font:inherit;width:90px;padding:8px 10px;border-radius:9px;border:1.5px solid var(--line);text-align:right}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+.toast{z-index:9}
+.dr{position:fixed;inset:0;background:rgba(10,12,20,.42);display:none;z-index:5}
+.dr.on{display:block}
+.dr aside{position:absolute;right:0;top:0;bottom:0;width:440px;max-width:100%;background:var(--paper);padding:22px;overflow:auto}
+.dr .x{float:right;font-size:22px;line-height:1}
+.dr .top{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+.dr .top img{width:84px;height:84px;border-radius:18px;object-fit:cover}
+.dr .top h2{font-size:22px}
+.dr .top small{color:var(--sis);display:block;margin:2px 0 6px}
+.dr .card{margin-bottom:12px;padding:14px 16px}
+.dr .card h2{font-size:15px;margin-bottom:8px}
+.dr .kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:13.5px}
+.dr .kv span{color:var(--sis)}
+.dr .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dr textarea{width:100%;font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:10px;min-height:64px;resize:vertical;background:#fff}
+.dr .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.dr .acts .b{margin:0}
+.mx th,.mx td{text-align:center}
+.mx th:first-child,.mx td:first-child{text-align:left}
+.mx input{width:17px;height:17px;accent-color:var(--ink)}
+select.rs{font:inherit;padding:7px 10px;border-radius:9px;border:1.5px solid var(--line);background:#fff}
+.lg{display:flex;gap:12px;padding:11px 12px;border-bottom:1px solid var(--line);align-items:center}
+.lg:last-child{border:0}
+.lg i{font-size:19px;color:var(--sis)}
+.lg small{margin-left:auto;color:var(--sis);white-space:nowrap}
+@media(max-width:900px){nav{display:none}.kpis{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}main{padding:18px}}
+</style>
+</head>
+<body><!--tb--><style>#tb{position:fixed;top:0;left:0;right:0;height:46px;z-index:99999;display:flex;align-items:center;gap:6px;padding:0 14px;background:#111;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif}#tb a{color:#d8d8d8;text-decoration:none;padding:9px 14px;border-radius:8px;white-space:nowrap}#tb a:hover{background:#2a2a2a}#tb a.on{background:#fff;color:#111}#tb span{flex:1}#tb a.sw{border:1px solid #555}html{padding-top:46px}.phone{top:62px!important}@media(max-width:900px){#tb{display:none}html{padding-top:0}}</style><div id="tb"><a class="on" href="panel.html">Rastla</a><a href="c/panel.html">Şıpsevdi</a><a href="d/panel.html">Yakın</a><a href="e/panel.html">Önce plan</a><span></span><a class="sw" href="./">Uygulama demosu</a></div><!--/tb-->
+<nav id="nav">
+  <div class="disp">Rastla<small>Yönetim paneli · örnek</small></div>
+</nav>
+<main>
+  <section class="view on" id="ozet">
+    <div class="head"><h1>Genel bakış</h1><span>Bugün · örnek veriler</span></div>
+    <div class="kpis">
+      <div class="card kpi"><small>Toplam üye</small><div class="disp">12.480</div><em>+214 bu hafta</em></div>
+      <div class="card kpi"><small>Günlük aktif</small><div class="disp">3.906</div><em>+%6</em></div>
+      <div class="card kpi"><small>Bugünkü eşleşme</small><div class="disp">1.172</div><em>+%11</em></div>
+      <div class="card kpi"><small>Açık şikâyet</small><div class="disp" id="kOpen">4</div><em class="d">2'si 24 saati geçti</em></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h2>Günlük yeni kayıt</h2><div class="bars" id="bars"></div></div>
+      <div class="card fun"><h2>Kayıttan eşleşmeye</h2>
+        <div><span>Kayıt oldu<b>%100</b></span><i style="width:100%"></i></div>
+        <div><span>Profili tamamladı<b>%78</b></span><i style="width:78%"></i></div>
+        <div><span>Fotoğrafı onaylandı<b>%71</b></span><i style="width:71%"></i></div>
+        <div><span>İlk beğeni<b>%64</b></span><i style="width:64%"></i></div>
+        <div><span>İlk eşleşme<b>%41</b></span><i style="width:41%"></i></div>
+        <div><span>İlk mesaj<b>%29</b></span><i style="width:29%"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="uyeler">
+    <div class="head"><h1>Üyeler</h1><span id="ucount"></span></div>
+    <div class="tools"><input id="q" placeholder="Ad ya da şehir ara" oninput="users()"><select id="fs" onchange="users()"><option value="">Tüm durumlar</option><option>Aktif</option><option>Askıda</option><option>Engelli</option></select></div>
+    <div class="card" style="padding:6px"><table><thead><tr><th>Üye</th><th>Kayıt</th><th>Doğrulama</th><th>Şikâyet</th><th>Durum</th><th></th></tr></thead><tbody id="utb"></tbody></table></div>
+  </section>
+
+  <section class="view" id="sikayet">
+    <div class="head"><h1>Şikâyetler</h1><span>En eski en üstte</span></div>
+    <div class="card" style="padding:6px"><table><thead><tr><th>Şikâyet edilen</th><th>Neden</th><th>Bildiren</th><th>Bekleme</th><th></th></tr></thead><tbody id="rtb"></tbody></table></div>
+  </section>
+
+  <section class="view" id="foto">
+    <div class="head"><h1>Fotoğraf onayı</h1><span>Yeni yüklenen fotoğraflar yayına girmeden burada bekler</span></div>
+    <div class="photos" id="phs"></div>
+  </section>
+
+  <section class="view" id="ayar">
+    <div class="head"><h1>Ayarlar</h1><span>Uygulama güncellemesi gerekmeden değişir</span></div>
+    <div class="card" style="max-width:640px">
+      <div class="set"><div><b>Günlük beğeni sınırı</b><small>Ücretsiz üye başına</small></div><input value="50"></div>
+      <div class="set"><div><b>Varsayılan keşif mesafesi</b><small>Kilometre</small></div><input value="15"></div>
+      <div class="set"><div><b>Konum yuvarlama</b><small>Gösterilen mesafenin en küçük adımı, km</small></div><input value="1"></div>
+      <div class="set"><div><b>Otomatik askıya alma</b><small>Bu kadar şikâyetten sonra profil incelemeye düşer</small></div><input value="3"></div>
+      <div class="set"><div><b>En küçük yaş</b><small>Kayıtta doğum tarihi kontrolü</small></div><input value="18"></div>
+    </div>
+    <button class="b k" style="margin:14px 0 0" onclick="toast('Ayarlar kaydedildi');log('settings','Uygulama ayarları güncellendi')">Kaydet</button>
+  </section>
+
+  <section class="view" id="yonet">
+    <div class="head"><h1>Yöneticiler</h1><span>Kim neyi görebilir, neyi değiştirebilir</span></div>
+    <div class="card" style="padding:6px;margin-bottom:16px"><table><thead><tr><th>Yönetici</th><th>Rol</th><th>Son giriş</th><th>İki adımlı giriş</th><th></th></tr></thead><tbody id="atb"></tbody></table></div>
+    <button class="b k" style="margin:0 0 22px" onclick="addA()"><i class="ti ti-plus"></i> Yönetici davet et</button>
+    <div class="card" style="padding:6px"><table class="mx"><thead><tr><th>Yetki</th><th>Süper yönetici</th><th>Moderatör</th><th>Destek</th><th>İzleyici</th></tr></thead><tbody id="mtb"></tbody></table></div>
+  </section>
+
+  <section class="view" id="kayit">
+    <div class="head"><h1>İşlem kaydı</h1><span>Paneldeki her işlem kimin yaptığıyla saklanır</span></div>
+    <div class="card" style="padding:6px" id="ltb"></div>
+  </section>
+</main>
+<div class="dr" id="dr" onclick="if(event.target===this)closeD()"><aside id="drb"></aside></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+let U=[
+ {k:'p1',n:'Elif Yıldız',c:'İstanbul',d:'09.11.2026',v:1,r:0,s:'Aktif'},
+ {k:'p2',n:'Kaan Demir',c:'İzmir',d:'08.11.2026',v:1,r:0,s:'Aktif'},
+ {k:'p3',n:'Defne Aksoy',c:'Ankara',d:'08.11.2026',v:0,r:1,s:'Aktif'},
+ {k:'p4',n:'Emre Koç',c:'İstanbul',d:'06.11.2026',v:0,r:3,s:'Askıda'},
+ {k:'p5',n:'Selin Arslan',c:'Bursa',d:'05.11.2026',v:1,r:0,s:'Aktif'},
+ {k:'p6',n:'Ada Şahin',c:'İstanbul',d:'03.11.2026',v:0,r:0,s:'Aktif'},
+ {k:'p7',n:'Zeynep Kaya',c:'Eskişehir',d:'01.11.2026',v:1,r:0,s:'Aktif'},
+ {k:'p9',n:'Naz Öztürk',c:'Antalya',d:'28.10.2026',v:1,r:0,s:'Aktif'},
+ {k:'p10',n:'İpek Çelik',c:'İstanbul',d:'24.10.2026',v:1,r:2,s:'Aktif'}];
+let R=[
+ {k:'p4',why:'Taciz ya da hakaret',by:'Selin A.',t:'31 saat',late:1},
+ {k:'p4',why:'Reklam ya da dolandırıcılık',by:'Naz Ö.',t:'26 saat',late:1},
+ {k:'p10',why:'Sahte profil',by:'Kaan D.',t:'5 saat'},
+ {k:'p3',why:'Uygunsuz fotoğraf',by:'Emre K.',t:'2 saat'}];
+let F=['p6','p3','p2','p9'];
+const name=k=>U.find(u=>u.k===k)?.n||'';
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800)}
+function nav(){const cur=document.querySelector('.view.on').id;
+  $('nav').innerHTML='<div class="disp">Rastla<small>Yönetim paneli · örnek</small></div>'+
+  [['ozet','chart-bar','Genel bakış'],['uyeler','users','Üyeler'],['sikayet','flag','Şikâyetler',R.length],['foto','photo-check','Fotoğraf onayı',F.length],['yonet','shield-lock','Yöneticiler'],['kayit','history','İşlem kaydı'],['ayar','settings','Ayarlar']]
+  .map(([id,i,l,n])=>`<button class="${id===cur?'on':''}" onclick="show('${id}')"><i class="ti ti-${i}"></i>${l}${n?`<b>${n}</b>`:''}</button>`).join('')+
+  '<a href="index.html"><i class="ti ti-device-mobile"></i>Uygulama demosu</a>';
+  $('kOpen').textContent=R.length}
+function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===id));nav()}
+function users(){const q=$('q').value.toLocaleLowerCase('tr'),s=$('fs').value;
+  const L=U.filter(u=>(!s||u.s===s)&&(u.n+u.c).toLocaleLowerCase('tr').includes(q));
+  $('ucount').textContent=L.length+' üye listeleniyor';
+  $('utb').innerHTML=L.map(u=>`<tr><td><div class="u"><img src="img/${u.k}.jpg" alt=""><div>${u.n}<small>${u.c}</small></div></div></td><td>${u.d}</td>
+   <td>${u.v?'<span class="tag">Doğrulandı</span>':'<span class="tag g">Bekliyor</span>'}</td><td>${u.r||'-'}</td>
+   <td><span class="tag ${u.s==='Aktif'?'':u.s==='Askıda'?'y':'r'}">${u.s}</span></td>
+   <td style="text-align:right;white-space:nowrap"><button class="b" onclick="openD('${u.k}')">İncele</button>${u.s==='Aktif'?`<button class="b" onclick="setS('${u.k}','Askıda')">Askıya al</button>`:`<button class="b" onclick="setS('${u.k}','Aktif')">Aktifleştir</button>`}${u.s!=='Engelli'?`<button class="b n" onclick="setS('${u.k}','Engelli')">Engelle</button>`:''}</td></tr>`).join('')}
+function setS(k,s){U.find(u=>u.k===k).s=s;users();toast(name(k)+': '+s);log('user',name(k)+' durumu: '+s)}
+function reports(){$('rtb').innerHTML=R.length?R.map((r,i)=>`<tr><td><div class="u"><img src="img/${r.k}.jpg" alt=""><div>${name(r.k)}<small>Toplam ${U.find(u=>u.k===r.k).r} şikâyet</small></div></div></td><td>${r.why}</td><td>${r.by}</td>
+  <td><span class="tag ${r.late?'r':'g'}">${r.t}</span></td><td style="text-align:right;white-space:nowrap"><button class="b" onclick="res(${i},'Şikâyet reddedildi')">Reddet</button><button class="b" onclick="res(${i},'Uyarı gönderildi')">Uyar</button><button class="b k" onclick="res(${i},'Askıda')">Askıya al</button></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--sis);padding:30px">Bekleyen şikâyet yok.</td></tr>'}
+function res(i,a){const r=R.splice(i,1)[0];if(a==='Askıda'){U.find(u=>u.k===r.k).s='Askıda';users();toast(name(r.k)+' askıya alındı')}else toast(a);log('flag',name(r.k)+' şikâyeti ('+r.why+'): '+a);reports();nav()}
+function photos(){$('phs').innerHTML=F.length?F.map(k=>`<div class="ph"><img src="img/${k}.jpg" alt=""><div><p>${name(k)}<small>Az önce yüklendi</small></p><button class="b k" onclick="ph('${k}','Fotoğraf onaylandı')">Onayla</button><button class="b n" onclick="ph('${k}','Fotoğraf reddedildi, üyeye bildirildi')">Reddet</button></div></div>`).join(''):'<p style="color:var(--sis)">Bekleyen fotoğraf yok.</p>'}
+function ph(k,m){F=F.filter(x=>x!==k);photos();nav();toast(m);log('photo-check',name(k)+': '+m)}
+$('bars').innerHTML=[['Çar',142],['Per',168],['Cum',191],['Cmt',236],['Paz',258],['Pzt',177],['Sal',214]].map(([d,v])=>`<div>${v}<i style="height:${v/258*100}%"></i>${d}</div>`).join('');
+const X={p1:[27,'Hafta sonu kamp, hafta içi kahve.',['Kamp','Kahve','Fotoğraf']],p2:[31,'Yelken ve iyi bir kitap.',['Yelken','Kitap','Müzik']],p3:[26,'Seramik atölyesinde bulursun.',['Seramik','Yoga','Sinema']],p4:[33,'Hemen yaz, hızlı tanışalım.',['Spor','Araba']],p5:[29,'Koşu, köpekler, uzun yürüyüş.',['Koşu','Köpekler','Doğa']],p6:[24,'Yeni mezun, şehri keşfediyorum.',['Konser','Yemek','Gezi']],p7:[28,'Bisikletle her yere.',['Bisiklet','Kahve','Tasarım']],p9:[30,'Deniz olmadan olmaz.',['Dalış','Seyahat','Fotoğraf']],p10:[25,'Dans ve tiyatro.',['Dans','Tiyatro','Müzik']]};
+let A=[
+ {n:'Kurucu hesap',r:'Süper yönetici',t:'Bugün 09:12',f:1},
+ {n:'Derya Aydın',r:'Moderatör',t:'Bugün 08:40',f:1},
+ {n:'Onur Tekin',r:'Moderatör',t:'Dün 23:05',f:1},
+ {n:'Buse Kara',r:'Destek',t:'Dün 17:30',f:0},
+ {n:'Yatırımcı görünümü',r:'İzleyici',t:'3 gün önce',f:0}];
+const ROL=['Süper yönetici','Moderatör','Destek','İzleyici'];
+const M=[['Üyeleri ve profilleri görme',1,1,1,0],['Üyeyi askıya alma, engelleme',1,1,0,0],['Şikâyet sonuçlandırma',1,1,0,0],['Fotoğraf onayı',1,1,0,0],['Üyeye uyarı ve destek mesajı',1,1,1,0],['İstatistik ve raporlar',1,1,1,1],['Uygulama ayarlarını değiştirme',1,0,0,0],['Yönetici ekleme, rol değiştirme',1,0,0,0],['Üye verisini dışa aktarma, hesabı silme',1,0,0,0]];
+let L=[
+ {i:'flag',t:'Derya Aydın, Emre Koç hakkındaki şikâyeti inceledi: Askıya al',z:'Bugün 08:52'},
+ {i:'photo-check',t:'Onur Tekin 14 fotoğrafı onayladı, 2 fotoğrafı reddetti',z:'Dün 23:20'},
+ {i:'settings',t:'Kurucu hesap günlük beğeni sınırını 40 yerine 50 yaptı',z:'Dün 18:04'},
+ {i:'shield-lock',t:'Kurucu hesap Buse Kara için Destek rolü tanımladı',z:'12.11.2026'},
+ {i:'user',t:'Derya Aydın bir üyenin hesap silme talebini tamamladı',z:'11.11.2026'}];
+function log(i,t){L.unshift({i,t:'Kurucu hesap · '+t,z:'Az önce'});logs()}
+function logs(){$('ltb').innerHTML=L.map(l=>`<div class="lg"><i class="ti ti-${l.i}"></i><div>${l.t}</div><small>${l.z}</small></div>`).join('')}
+function admins(){$('atb').innerHTML=A.map((a,i)=>`<tr><td><div class="u"><div>${a.n}</div></div></td>
+  <td>${i?`<select class="rs" onchange="setR(${i},this.value)">${ROL.map(r=>`<option${r===a.r?' selected':''}>${r}</option>`).join('')}</select>`:'<span class="tag">Süper yönetici</span>'}</td>
+  <td>${a.t}</td><td>${a.f?'<span class="tag">Açık</span>':'<span class="tag g">Kapalı</span>'}</td>
+  <td style="text-align:right">${i?`<button class="b n" onclick="delA(${i})">Erişimi kaldır</button>`:''}</td></tr>`).join('');
+  $('mtb').innerHTML=M.map(([t,...v])=>`<tr><td>${t}</td>${v.map((c,j)=>`<td><input type="checkbox"${c?' checked':''}${j?'':' disabled'} onchange="toast('Yetki güncellendi');log('shield-lock','${ROL[j]} yetkisi değişti: ${t}')"></td>`).join('')}</tr>`).join('')}
+function setR(i,r){A[i].r=r;toast(A[i].n+': '+r);log('shield-lock',A[i].n+' rolü: '+r)}
+function delA(i){const a=A.splice(i,1)[0];admins();toast(a.n+' erişimi kaldırıldı');log('shield-lock',a.n+' erişimi kaldırıldı')}
+function addA(){A.push({n:'Yeni yönetici (davet gönderildi)',r:'Moderatör',t:'Henüz girmedi',f:0});admins();toast('Davet gönderildi');log('shield-lock','Yeni yönetici davet edildi')}
+function openD(k){const u=U.find(x=>x.k===k),x=X[k],rs=R.filter(r=>r.k===k);
+  $('drb').innerHTML=`<button class="x" onclick="closeD()"><i class="ti ti-x"></i></button>
+  <div class="top"><img src="img/${k}.jpg" alt=""><div><h2>${u.n}, ${x[0]}</h2><small>${u.c} · Kayıt ${u.d}</small><span class="tag ${u.s==='Aktif'?'':u.s==='Askıda'?'y':'r'}">${u.s}</span></div></div>
+  <div class="card"><h2>Profil içeriği</h2><p>${x[1]}</p><div class="chips">${x[2].map(c=>`<span class="tag g">${c}</span>`).join('')}</div></div>
+  <div class="card"><h2>Hesap</h2>
+   <div class="kv"><span>Telefon doğrulama</span><b>Tamam</b></div>
+   <div class="kv"><span>Profil doğrulama</span><b>${u.v?'Doğrulandı':'Bekliyor'}</b></div>
+   <div class="kv"><span>Giriş yöntemi</span><b>Telefon, Google</b></div>
+   <div class="kv"><span>Son görülme</span><b>Bugün</b></div>
+   <div class="kv"><span>Eşleşme / mesaj</span><b>${12+x[0]} / ${90+x[0]*7}</b></div>
+   <div class="kv"><span>Konum</span><b>${u.c} (yaklaşık)</b></div></div>
+  <div class="card"><h2>Şikâyet geçmişi</h2>${u.r?`<div class="kv"><span>Toplam</span><b>${u.r}</b></div>`+rs.map(r=>`<div class="kv"><span>${r.why}</span><b>${r.t} bekliyor</b></div>`).join(''):'<p style="color:var(--sis)">Şikâyet yok.</p>'}</div>
+  <div class="card"><h2>Moderatör notu</h2><textarea placeholder="Yalnızca yöneticiler görür"></textarea></div>
+  <div class="acts"><button class="b" onclick="act('${k}','Uyarı gönderildi')">Uyar</button>${u.s==='Aktif'?`<button class="b" onclick="setS('${k}','Askıda');openD('${k}')">Askıya al</button>`:`<button class="b" onclick="setS('${k}','Aktif');openD('${k}')">Aktifleştir</button>`}<button class="b n" onclick="setS('${k}','Engelli');openD('${k}')">Engelle</button><button class="b n" onclick="act('${k}','Fotoğraflar kaldırıldı')">Fotoğrafları kaldır</button><button class="b n" onclick="act('${k}','Hesap silme başlatıldı')">Hesabı sil</button></div>`;
+  $('dr').classList.add('on')}
+function closeD(){$('dr').classList.remove('on')}
+function act(k,m){toast(name(k)+': '+m);log('user',name(k)+': '+m)}
+users();reports();photos();admins();logs();nav();
+</script>
+</body>
+</html>

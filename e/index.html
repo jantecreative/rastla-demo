@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Önce plan · tasarım yönü E</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1F1E1D;--bordo:#2A1215;--kagit:#FAF9F5;--mut:#6B6A68;--line:#E2DFD6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--kagit);min-height:100vh;display:flex;gap:56px;justify-content:center;align-items:flex-start;padding:40px 32px;transition:background .2s}
+body.dk{background:#170A0C;color:#F3EDE6;--mut:#B3A8A2;--line:#4A2A2E}
+.side{width:400px;flex:none;font-size:15px;line-height:1.55}
+.tagl{font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.disp{font-weight:700;font-size:50px;letter-spacing:-2.5px;line-height:1.02;margin:6px 0 14px}
+h4{font-size:15px;margin:26px 0 10px}
+.hint{color:var(--mut);font-size:13.5px;margin-top:10px}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:18px}
+.mode button{flex:1;font:inherit;font-weight:600;padding:11px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:inherit;cursor:pointer}
+.mode button.on{background:var(--bordo);border-color:var(--bordo);color:#fff}
+body.dk .mode button.on{background:#F3EDE6;border-color:#F3EDE6;color:#170A0C}
+.scr{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.scr button{font:inherit;font-size:13.5px;font-weight:500;text-align:left;padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:#1F1E1D;cursor:pointer;display:flex;gap:8px;align-items:center}
+body.dk .scr button{background:#2A1215;color:#F3EDE6}
+.scr button em{font-style:normal;font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums}
+.scr button.on{background:var(--bordo);border-color:var(--bordo);color:#fff}
+body.dk .scr button.on{background:#F3EDE6;border-color:#F3EDE6;color:#170A0C}
+.scr{display:none}
+.scr.cur{display:grid}
+.lnk{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.lnk a{font-size:14px;font-weight:600;text-decoration:none;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);color:inherit}
+ol{list-style:none;display:flex;flex-direction:column;gap:10px}
+ol li{display:flex;gap:12px}
+ol em{font-style:normal;font-weight:700;color:var(--mut)}
+.phone{flex:none;position:sticky;top:40px;width:414px;height:868px;padding:12px;border-radius:56px;background:#120809;box-shadow:0 40px 80px -24px rgba(42,18,21,.5)}
+.phone iframe{display:block;width:390px;height:844px;border:0;border-radius:44px;background:#faf9f5}
+@media(max-width:900px){body{display:block;padding:0}.side{display:none}.phone{position:static;width:390px;height:844px;padding:0;border-radius:0;box-shadow:none}.phone iframe{border-radius:0}}
+</style>
+</head>
+<body><!--tb--><style>#tb{position:fixed;top:0;left:0;right:0;height:46px;z-index:99999;display:flex;align-items:center;gap:6px;padding:0 14px;background:#111;font:600 14px/1 system-ui,-apple-system,"Segoe UI",sans-serif}#tb a{color:#d8d8d8;text-decoration:none;padding:9px 14px;border-radius:8px;white-space:nowrap}#tb a:hover{background:#2a2a2a}#tb a.on{background:#fff;color:#111}#tb span{flex:1}#tb a.sw{border:1px solid #555}html{padding-top:46px}.phone{top:62px!important}@media(max-width:900px){#tb{display:none}html{padding-top:0}}</style><div id="tb"><a href="../">Rastla</a><a href="../c/">Şıpsevdi</a><a href="../d/">Yakın</a><a class="on" href="../e/">Önce plan</a><span></span><a class="sw" href="panel.html">Yönetim paneli</a></div><!--/tb-->
+<aside class="side">
+  <span class="tagl">Tasarım yönü E: önce plan, sonra eşleşme</span>
+  <div class="disp">Önce plan,<br>sonra eşleşme.</div>
+  <p>Kaydırma yok. Kullanıcı önce nerede ve ne zaman buluşmak istediğini söyler; aynı mekânda aynı planı yapan kişiler eşleşir. Diğer flört uygulamalarından en net ayrışan yön bu.</p>
+  <div class="mode"><button class="on" onclick="mode(0)">Açık · 12 ekran</button><button onclick="mode(1)">Koyu · 6 ekran</button><button onclick="mode(2)">Neo · 5 ekran</button><button onclick="mode(3)">Flört · 5 ekran</button></div>
+  <h4>Ekranlar</h4>
+  <div class="scr cur"><button data-f="Intro1Hook" onclick="go('Intro1Hook')"><em>01</em>Tanıtım 1</button><button data-f="Intro2Places" onclick="go('Intro2Places')"><em>02</em>Tanıtım 2</button><button data-f="Intro3Match" onclick="go('Intro3Match')"><em>03</em>Tanıtım 3</button><button data-f="Intro4Safety" onclick="go('Intro4Safety')"><em>04</em>Tanıtım 4</button><button data-f="Min01Welcome" onclick="go('Min01Welcome')"><em>05</em>Karşılama</button><button data-f="Min02Places" onclick="go('Min02Places')"><em>06</em>Nerede buluşalım</button><button data-f="Min03Discover" onclick="go('Min03Discover')"><em>07</em>Keşfet</button><button data-f="Min04Venue" onclick="go('Min04Venue')"><em>08</em>Kafe</button><button data-f="Min05Profile" onclick="go('Min05Profile')"><em>09</em>Profil</button><button data-f="Min06Match" onclick="go('Min06Match')"><em>10</em>Eşleşme</button><button data-f="Min07Chat" onclick="go('Min07Chat')"><em>11</em>Sohbet</button><button data-f="Min08CreatePlan" onclick="go('Min08CreatePlan')"><em>12</em>Plan aç</button></div>
+  <div class="scr"><button data-f="dark/Dk1Intro" onclick="go('dark/Dk1Intro')"><em>01</em>Tanıtım</button><button data-f="dark/Dk2Discover" onclick="go('dark/Dk2Discover')"><em>02</em>Keşfet</button><button data-f="dark/Dk3Venue" onclick="go('dark/Dk3Venue')"><em>03</em>Kafe</button><button data-f="dark/Dk4Profile" onclick="go('dark/Dk4Profile')"><em>04</em>Profil</button><button data-f="dark/Dk5Match" onclick="go('dark/Dk5Match')"><em>05</em>Eşleşme</button><button data-f="dark/Dk6Chat" onclick="go('dark/Dk6Chat')"><em>06</em>Sohbet</button></div>
+  <div class="scr"><button data-f="neo/Neo01Discover" onclick="go('neo/Neo01Discover')"><em>01</em>Keşfet</button><button data-f="neo/Neo02Venue" onclick="go('neo/Neo02Venue')"><em>02</em>Kafe</button><button data-f="neo/Neo03Match" onclick="go('neo/Neo03Match')"><em>03</em>Eşleştiniz</button><button data-f="neo/Neo04Profile" onclick="go('neo/Neo04Profile')"><em>04</em>Profil</button><button data-f="neo/Neo05Share" onclick="go('neo/Neo05Share')"><em>05</em>Paylaş</button></div>
+  <div class="scr"><button data-f="flort/Fl01Discover" onclick="go('flort/Fl01Discover')"><em>01</em>Keşfet · kişi önde</button><button data-f="flort/Fl02Profile" onclick="go('flort/Fl02Profile')"><em>02</em>Elif profili</button><button data-f="flort/Fl03Likes" onclick="go('flort/Fl03Likes')"><em>03</em>Seni beğenenler</button><button data-f="flort/Fl04Match" onclick="go('flort/Fl04Match')"><em>04</em>Eşleştiniz</button><button data-f="flort/Fl05Chat" onclick="go('flort/Fl05Chat')"><em>05</em>Sohbet</button></div>
+  <p class="hint">Ekranlar birbirine bağlı: telefondaki düğmelerle de ilerleyebilirsiniz. Veriler, mekânlar ve fotoğraflar örnektir; ad, renk ve logo sizin uygulamanıza göre yeniden tasarlanır.</p>
+  <div class="lnk"><a href="panel.html" style="background:#2A1215;border-color:#2A1215;color:#fff">Yönetim paneline geç</a><a href="../">Rastla</a><a href="../c/">Şıpsevdi</a><a href="../d/">Yakın</a></div>
+  <h4>Bu yönün üç kararı</h4>
+  <ol>
+    <li><em>01</em><span><b>Mekân önce.</b> Keşfet yalnız kişileri değil, mekânları ve oradaki planları gösterir.</span></li>
+    <li><em>02</em><span><b>Aynı plan, eşleşme.</b> İki kişi aynı yer ve zamana evet derse eşleşir; sohbet buluşma planıyla açılır.</span></li>
+    <li><em>03</em><span><b>Güvende buluş.</b> İlk buluşma herkese açık bir mekânda; doğrulanmış profil rozeti kartta görünür.</span></li>
+  </ol>
+</aside>
+<main class="phone" id="phone"><iframe id="fr" src="Intro1Hook.dc.html" title="Uygulama demosu"></iframe></main>
+<script>
+var fr=document.getElementById('fr');
+function mark(f){document.querySelectorAll('.scr button').forEach(function(b){b.classList.toggle('on',b.dataset.f===f)})}
+function go(f){fr.src=f+'.dc.html';mark(f)}
+var FIRST=['Intro1Hook','dark/Dk1Intro','neo/Neo01Discover','flort/Fl01Discover'];
+function mode(d){document.body.classList.toggle('dk',d===1);document.querySelectorAll('.mode button').forEach(function(b,i){b.classList.toggle('on',i===d)});document.querySelectorAll('.scr').forEach(function(b,i){b.classList.toggle('cur',i===d)});go(FIRST[d])}
+fr.addEventListener('load',function(){try{var m=fr.contentWindow.location.pathname.match(/\/e\/((?:(?:dark|neo|flort)\/)?[A-Za-z0-9]+)\.dc(\.html)?$/);if(m)mark(m[1])}catch(e){}});
+mark('Intro1Hook');
+function fit(){var p=document.getElementById('phone');p.style.zoom=window.innerWidth<=900?Math.min(window.innerWidth/390,window.innerHeight/844):''}
+window.addEventListener('resize',fit);fit();
+</script>
+</body>
+</html>
